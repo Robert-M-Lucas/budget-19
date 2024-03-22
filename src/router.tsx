@@ -1,5 +1,6 @@
 import {createBrowserRouter} from "react-router-dom";
-import App from "./App.tsx";
+import App from "./pages/index/App.tsx";
+import ExampleComponent from "./components/ExampleComponent.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -9,6 +10,9 @@ export const router = createBrowserRouter([
     },
     {
         path: "/test",
-        element: <h1>Test Secondary Page</h1>,
+        element: <>
+            <h1>Test Secondary Page</h1>
+            <ExampleComponent/>
+        </>,
     },
 ]);
