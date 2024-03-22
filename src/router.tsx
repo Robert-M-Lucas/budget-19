@@ -1,20 +1,18 @@
 import {createBrowserRouter} from "react-router-dom";
-import App from "./pages/index/App.tsx";
-import ExampleComponent from "./components/ExampleComponent.tsx";
+import IndexPage from "./pages/index/IndexPage.tsx";
+import DashboardPage from "./pages/dashboard/DashboardPage.tsx";
+import _404Page from "./pages/404/404.tsx";
 
 // ? Routing - see https://reactrouter.com/en/main
 
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <App/>,
-        errorElement: <h1>404</h1>
+        element: <IndexPage/>,
+        errorElement: <_404Page/>
     },
     {
-        path: "/test",
-        element: <>
-            <h1>Test Secondary Page</h1>
-            <ExampleComponent/>
-        </>,
+        path: "/dash",
+        element: <DashboardPage/>,
     },
 ]);
