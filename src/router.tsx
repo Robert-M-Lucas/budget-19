@@ -1,9 +1,75 @@
 import {createBrowserRouter} from "react-router-dom";
-import IndexPage from "./pages/index/IndexPage.tsx";
 import DashboardPage from "./pages/dashboard/DashboardPage.tsx";
 import _404Page from "./pages/404/404.tsx";
+import IndexPage from "./pages/index/IndexPage.tsx";
 
 // ? Routing - see https://reactrouter.com/en/main
+
+const tileset_defult: Array<{ text: string; rows: number; cols: number }> = [
+    { text: "Tile 1", cols: 1, rows: 1 },
+    { text: "Tile 2", cols: 1, rows: 1 },
+    { text: "Tile 3", cols: 2, rows: 2 },
+    { text: "Tile 4", cols: 2, rows: 2 },
+    { text: "Tile 5", cols: 1, rows: 1 },
+    { text: "Tile 6", cols: 1, rows: 1 },
+    { text: "Tile 7", cols: 1, rows: 1 },
+    { text: "Tile 8", cols: 1, rows: 1 },
+    { text: "Tile 9", cols: 2, rows: 1 },
+];
+
+const tileset_column: Array<{ text: string; rows: number; cols: number }> = [
+    { text: "Tile 1", cols: 1, rows: 1 },
+    { text: "Tile 2", cols: 2, rows: 1 },
+    { text: "Tile 3", cols: 2, rows: 2 },
+    { text: "Tile 4", cols: 2, rows: 2 },
+    { text: "Tile 5", cols: 1, rows: 1 },
+    { text: "Tile 6", cols: 1, rows: 1 },
+    { text: "Tile 7", cols: 1, rows: 1 },
+    { text: "Tile 8", cols: 1, rows: 1 },
+    { text: "Tile 9", cols: 2, rows: 1 },
+];
+
+const tileset_many: Array<{ text: string; rows: number; cols: number }> = [
+    { text: "Tile 1", cols: 1, rows: 1 },
+    { text: "Tile 2", cols: 2, rows: 1 },
+    { text: "Tile 3", cols: 2, rows: 2 },
+    { text: "Tile 4", cols: 2, rows: 2 },
+    { text: "Tile 5", cols: 1, rows: 1 },
+    { text: "Tile 6", cols: 1, rows: 1 },
+    { text: "Tile 7", cols: 1, rows: 1 },
+    { text: "Tile 8", cols: 1, rows: 1 },
+    { text: "Tile 9", cols: 2, rows: 1 },
+    { text: "Tile 11", cols: 1, rows: 1 },
+    { text: "Tile 12", cols: 2, rows: 1 },
+    { text: "Tile 13", cols: 2, rows: 2 },
+    { text: "Tile 14", cols: 2, rows: 2 },
+    { text: "Tile 15", cols: 1, rows: 1 },
+    { text: "Tile 16", cols: 1, rows: 1 },
+    { text: "Tile 17", cols: 1, rows: 1 },
+    { text: "Tile 18", cols: 1, rows: 1 },
+    { text: "Tile 19", cols: 2, rows: 1 },
+];
+
+const tileset_weird: Array<{ text: string; rows: number; cols: number }> = [
+    { text: "Tile 1", cols: 1, rows: 3 },
+    { text: "Tile 2", cols: 2, rows: 3 },
+    { text: "Tile 3", cols: 3, rows: 2 },
+    { text: "Tile 4", cols: 3, rows: 2 },
+    { text: "Tile 5", cols: 3, rows: 1 },
+    { text: "Tile 6", cols: 1, rows: 1 },
+    { text: "Tile 7", cols: 1, rows: 1 },
+    { text: "Tile 8", cols: 1, rows: 1 },
+    { text: "Tile 9", cols: 2, rows: 1 },
+    { text: "Tile 11", cols: 1, rows: 1 },
+    { text: "Tile 12", cols: 2, rows: 1 },
+    { text: "Tile 13", cols: 2, rows: 2 },
+    { text: "Tile 14", cols: 2, rows: 2 },
+    { text: "Tile 15", cols: 1, rows: 1 },
+    { text: "Tile 16", cols: 1, rows: 1 },
+    { text: "Tile 17", cols: 3, rows: 3 },
+    { text: "Tile 18", cols: 1, rows: 1 },
+    { text: "Tile 19", cols: 2, rows: 1 },
+];
 
 export const router = createBrowserRouter([
     {
@@ -13,6 +79,18 @@ export const router = createBrowserRouter([
     },
     {
         path: "/dash",
-        element: <DashboardPage/>,
+        element: <DashboardPage tiles={tileset_defult}/>,
+    },
+    {
+        path: "/dash-2",
+        element: <DashboardPage tiles={tileset_column}/>,
+    },
+    {
+        path: "/dash-3",
+        element: <DashboardPage tiles={tileset_many}/>,
+    },
+    {
+        path: "/dash-4",
+        element: <DashboardPage tiles={tileset_weird}/>,
     },
 ]);
