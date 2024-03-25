@@ -3,10 +3,14 @@ import {Link} from "react-router-dom";
 import {Header} from "../../components/Header.tsx";
 import {Footer} from "../../components/Footer.tsx";
 
-function IndexPage() {
+interface Props {
+    user?: string
+}
+
+function IndexPage({ user }: Props) {
   return (
       <>
-          <Header/>
+          <Header user={user}/>
           <FullscreenCenter>
               <div className="text-center">
                   <h1>Budget-19 Home Page</h1>

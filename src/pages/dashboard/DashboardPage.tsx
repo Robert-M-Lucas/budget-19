@@ -4,6 +4,8 @@ import { TilesContainer, RenderTileFunction } from "react-tiles-dnd";
 import useWindowDimensions from "../../hooks/WindowHooks.tsx";
 import {Link} from "react-router-dom";
 import {Footer} from "../../components/Footer.tsx";
+import {Header} from "../../components/Header.tsx";
+import {Sidebar} from "../../components/Sidebar.tsx";
 
 // ? Lot of code obtained from here for testing: https://codesandbox.io/p/sandbox/react-tiles-dnd-responsive-bd0ly?file=%2Fsrc%2Findex.tsx
 
@@ -29,17 +31,22 @@ export default function Dashboard(props: Props) {
     const columns = Math.max(Math.floor(width / 200), 1);
 
     return <>
-        <div className="App ps-5 pe-5">
-            <h1>Testing Tiles</h1>
-            <p><Link to={"/"}>Go back</Link></p>
-            <TilesContainer
-                data={props.tiles}
-                renderTile={render}
-                tileSize={tileSize}
-                ratio={1}
-                columns={columns}
-            ></TilesContainer>
+        <div style={{width: "100vw", height: "100vh"}}>
+            <Header user="testUser"/>
+            <Sidebar>
+                <div className="App ps-5 pe-5">
+                    <h1>Testing Tiles</h1>
+                    <p><Link to={"/"}>Go back</Link></p>
+                    <TilesContainer
+                        data={props.tiles}
+                        renderTile={render}
+                        tileSize={tileSize}
+                        ratio={1}
+                        columns={columns}
+                    ></TilesContainer>
+                </div>
+                <Footer/>
+            </Sidebar>
         </div>
-        <Footer/>
-    </>;
+    </>
 }

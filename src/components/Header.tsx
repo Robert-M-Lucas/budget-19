@@ -1,4 +1,8 @@
-export function Header() {
+interface Props {
+    user?: string
+}
+
+export function Header({ user }: Props) {
     return <header className="p-3 text-bg-dark">
         <div className="container">
             <div className="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -15,11 +19,18 @@ export function Header() {
                 </ul>
 
                 <div className="text-end">
-
-                    <a href="/admin/login">
-                        <button type="button" className="btn btn-outline-light me-2">Login</button>
-                    </a>
-
+                    {user ?
+                        <>
+                            <label className="label fw-bold text-white" style={{marginRight: "10px"}}>{user}</label>
+                            <a href="/">
+                                <button type="button" className="btn btn-outline-light me-2">Logout</button>
+                            </a>
+                        </>
+                        :
+                        <a href="/user-test">
+                        <button type="button" className="btn btn-light me-2">Login</button>
+                        </a>
+                    }
                 </div>
             </div>
         </div>

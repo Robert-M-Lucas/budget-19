@@ -78,6 +78,11 @@ export const router = createBrowserRouter([
         errorElement: <_404Page/>
     },
     {
+        path: "/user-test",
+        element: <IndexPage user={"testUserName"}/>,
+        errorElement: <_404Page/>
+    },
+    {
         path: "/dash",
         element: <DashboardPage tiles={tileset_defult}/>,
     },
