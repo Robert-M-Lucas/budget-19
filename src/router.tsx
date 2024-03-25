@@ -19,7 +19,7 @@ const tileset_defult: Array<{ text: string; rows: number; cols: number }> = [
 
 const tileset_column: Array<{ text: string; rows: number; cols: number }> = [
     { text: "Tile 1", cols: 1, rows: 1 },
-    { text: "Tile 2", cols: 2, rows: 1 },
+    { text: "Tile 2", cols: 1, rows: 2 },
     { text: "Tile 3", cols: 2, rows: 2 },
     { text: "Tile 4", cols: 2, rows: 2 },
     { text: "Tile 5", cols: 1, rows: 1 },
@@ -48,6 +48,24 @@ const tileset_many: Array<{ text: string; rows: number; cols: number }> = [
     { text: "Tile 17", cols: 1, rows: 1 },
     { text: "Tile 18", cols: 1, rows: 1 },
     { text: "Tile 19", cols: 2, rows: 1 },
+    { text: "Tile 21", cols: 1, rows: 1 },
+    { text: "Tile 22", cols: 2, rows: 1 },
+    { text: "Tile 23", cols: 2, rows: 2 },
+    { text: "Tile 24", cols: 2, rows: 2 },
+    { text: "Tile 25", cols: 1, rows: 1 },
+    { text: "Tile 26", cols: 1, rows: 1 },
+    { text: "Tile 27", cols: 1, rows: 1 },
+    { text: "Tile 28", cols: 1, rows: 1 },
+    { text: "Tile 29", cols: 2, rows: 1 },
+    { text: "Tile 31", cols: 1, rows: 1 },
+    { text: "Tile 32", cols: 2, rows: 1 },
+    { text: "Tile 33", cols: 2, rows: 2 },
+    { text: "Tile 34", cols: 2, rows: 2 },
+    { text: "Tile 35", cols: 1, rows: 1 },
+    { text: "Tile 36", cols: 1, rows: 1 },
+    { text: "Tile 37", cols: 1, rows: 1 },
+    { text: "Tile 38", cols: 1, rows: 1 },
+    { text: "Tile 39", cols: 2, rows: 1 },
 ];
 
 const tileset_weird: Array<{ text: string; rows: number; cols: number }> = [

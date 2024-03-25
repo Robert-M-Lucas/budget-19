@@ -1,4 +1,5 @@
 import {ReactNode} from "react";
+import useWindowDimensions from "../../hooks/WindowHooks.tsx";
 
 // ? From https://getbootstrap.com/docs/5.0/examples/sidebars/
 
@@ -7,48 +8,57 @@ interface Props {
 }
 
 export function Sidebar({ children }: Props) {
+    const {width, height} = useWindowDimensions();
+    const aspect_ratio = (width == 0 ? 1 : width) / (height == 0 ? 1 : height);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const use_narrow = aspect_ratio < 1.5;
+
     return <div className="row flex-grow-1" style={{marginRight: "0", minHeight: "0"}}>
-        <div className="col-2 d-flex flex-column flex-shrink-0 p-3 text-dark border-end" style={{minHeight: "0"}}>
+        <div className={"col-2 d-flex flex-column flex-shrink-0 p-3 text-dark border-end"} style={{minHeight: "0"}}>
             <a href="/public" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
-                <svg className="bi me-2" width="40" height="32">
-                </svg>
-                <span className="fs-4">Test Sidebar</span>
+                <img src="https://picsum.photos/30/30" style={{marginRight: "10px", width: "30px", height: "30px"}}/>
+                <span className="fs-4">{use_narrow ? "Narrow" : "Sidebar"}</span>
             </a>
             <hr/>
             <ul className="nav nav-pills flex-column mb-auto">
                 <li className="nav-item">
                     <a href="#" className="nav-link active" aria-current="page">
-                        <svg className="bi me-2" width="16" height="16">
-                        </svg>
-                        Home
+                        <div className="bi me-2" style={{display: "inline", width: "16px", height: "16px"}}>
+                            <img src="https://picsum.photos/16/16"/>
+                        </div>
+                        Lorem Ipsum
                     </a>
                 </li>
                 <li>
                     <a href="#" className="nav-link text-dark">
-                        <svg className="bi me-2" width="16" height="16">
-                        </svg>
-                        Dashboard
+                        <div className="bi me-2" style={{display: "inline", width: "16px", height: "16px"}}>
+                            <img src="https://picsum.photos/16/16"/>
+                        </div>
+                        Lorem Ipsum
                     </a>
                 </li>
                 <li>
                     <a href="#" className="nav-link text-dark">
-                        <svg className="bi me-2" width="16" height="16">
-                        </svg>
-                        Orders
+                        <div className="bi me-2" style={{display: "inline", width: "16px", height: "16px"}}>
+                            <img src="https://picsum.photos/16/16"/>
+                        </div>
+                        Lorem Ipsum
                     </a>
                 </li>
                 <li>
                     <a href="#" className="nav-link text-dark">
-                        <svg className="bi me-2" width="16" height="16">
-                        </svg>
-                        Products
+                        <div className="bi me-2" style={{display: "inline", width: "16px", height: "16px"}}>
+                            <img src="https://picsum.photos/16/16"/>
+                        </div>
+                        Lorem Ipsum
                     </a>
                 </li>
                 <li>
                     <a href="#" className="nav-link text-dark">
-                        <svg className="bi me-2" width="16" height="16">
-                        </svg>
-                        Customers
+                        <div className="bi me-2" style={{display: "inline", width: "16px", height: "16px"}}>
+                            <img src="https://picsum.photos/16/16"/>
+                        </div>
+                        Lorem Ipsum
                     </a>
                 </li>
             </ul>

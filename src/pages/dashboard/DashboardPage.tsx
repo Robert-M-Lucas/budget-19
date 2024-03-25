@@ -29,11 +29,12 @@ export default function Dashboard(props: Props) {
     const {width} = useWindowDimensions();
     const columns = Math.max(Math.floor(width / 200), 1);
 
+
     return <>
         <div className="vh-100 d-flex flex-column">
             <Header user="testUser"/>
             <Sidebar>
-                <div className="App ps-5 pe-5">
+                <div className="App ps-5 pe-5 mt-3">
                     <h1>Testing Tiles</h1>
                     <p><Link to={"/"}>Go back</Link></p>
                     <TilesContainer
