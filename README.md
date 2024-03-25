@@ -14,6 +14,8 @@ Router config ([docs](https://reactrouter.com/en/main)): `/src/router.tsx`
 
 ## Commands
 
+Sync packages: `npm install`
+
 Serve webpage locally: `npm run dev`
 
 ### Firebase
