@@ -3,9 +3,8 @@ import "react-tiles-dnd/esm/index.css";
 import { TilesContainer, RenderTileFunction } from "react-tiles-dnd";
 import useWindowDimensions from "../../hooks/WindowHooks.tsx";
 import {Link} from "react-router-dom";
-import {Footer} from "../../components/Footer.tsx";
 import {Header} from "../../components/Header.tsx";
-import {Sidebar} from "../../components/Sidebar.tsx";
+import {Sidebar} from "./Sidebar.tsx";
 
 // ? Lot of code obtained from here for testing: https://codesandbox.io/p/sandbox/react-tiles-dnd-responsive-bd0ly?file=%2Fsrc%2Findex.tsx
 
@@ -31,7 +30,7 @@ export default function Dashboard(props: Props) {
     const columns = Math.max(Math.floor(width / 200), 1);
 
     return <>
-        <div style={{width: "100vw", height: "100vh"}}>
+        <div className="vh-100 d-flex flex-column">
             <Header user="testUser"/>
             <Sidebar>
                 <div className="App ps-5 pe-5">
@@ -45,7 +44,6 @@ export default function Dashboard(props: Props) {
                         columns={columns}
                     ></TilesContainer>
                 </div>
-                <Footer/>
             </Sidebar>
         </div>
     </>

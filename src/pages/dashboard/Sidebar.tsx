@@ -7,12 +7,12 @@ interface Props {
 }
 
 export function Sidebar({ children }: Props) {
-    return <div className="row w-100 h-100">
-        <div className="col-2 d-flex flex-column flex-shrink-0 p-3 text-dark border-end h-100 sticky-top">
-            <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+    return <div className="row flex-grow-1" style={{marginRight: "0", minHeight: "0"}}>
+        <div className="col-2 d-flex flex-column flex-shrink-0 p-3 text-dark border-end" style={{minHeight: "0"}}>
+            <a href="/public" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
                 <svg className="bi me-2" width="40" height="32">
                 </svg>
-                <span className="fs-4">Sidebar</span>
+                <span className="fs-4">Test Sidebar</span>
             </a>
             <hr/>
             <ul className="nav nav-pills flex-column mb-auto">
@@ -70,7 +70,7 @@ export function Sidebar({ children }: Props) {
                 </ul>
             </div>
         </div>
-        <div className="col-10">
+        <div className="col-10 overflow-auto" style={{minHeight: "0", height: "100%"}}>
             {children}
         </div>
     </div>
