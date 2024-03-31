@@ -5,7 +5,7 @@ import {RouterProvider} from "react-router-dom";
 import {router} from "./router.tsx";
 
 // ! Potentially temporary - UI Styling tbd
-import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap/scss/bootstrap.scss'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
