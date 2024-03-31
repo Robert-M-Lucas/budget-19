@@ -1,4 +1,4 @@
-import useWindowDimensions from "../hooks/WindowHooks.tsx";
+import useWindowDimensions from "../hooks/WindowDimensionsHook.tsx";
 
 interface Props {
     user?: string

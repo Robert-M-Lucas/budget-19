@@ -1,7 +1,7 @@
 import "./styles.css";
 import "react-tiles-dnd/esm/index.css";
 import { TilesContainer, RenderTileFunction } from "react-tiles-dnd";
-import useWindowDimensions from "../../hooks/WindowHooks.tsx";
+import useWindowDimensions from "../../hooks/WindowDimensionsHook.tsx";
 import {Link} from "react-router-dom";
 import {Header} from "../../components/Header.tsx";
 import {Sidebar} from "../../components/Sidebar.tsx";
