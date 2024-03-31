@@ -12,7 +12,7 @@ export function SampleModal() {
             <div className="modal-content">
                 <div className="modal-header">
                     <h5 className="modal-title">Modal title</h5>
-                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" className="btn-close" aria-label="Close" onClick={() => setShow(false)}></button>
                 </div>
                 <div className="modal-body">
                     <p>Modal body text goes here.</p>
