@@ -127,4 +127,8 @@ export const router = createBrowserRouter([
         path: "/sidebar_header",
         element: <SampleSidebarHeader/>,
     },
+    {
+        path: "/sample_modal",
+        element: <SampleModal/>,
+    },
 ]);
