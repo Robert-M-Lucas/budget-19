@@ -1,5 +1,5 @@
 import {ReactNode} from "react";
-import useWindowDimensions from "../../hooks/WindowHooks.tsx";
+import useWindowDimensions from "../hooks/WindowHooks.tsx";
 
 // ? From https://getbootstrap.com/docs/5.0/examples/sidebars/
 

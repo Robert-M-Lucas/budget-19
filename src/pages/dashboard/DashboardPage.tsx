@@ -4,7 +4,7 @@ import { TilesContainer, RenderTileFunction } from "react-tiles-dnd";
 import useWindowDimensions from "../../hooks/WindowHooks.tsx";
 import {Link} from "react-router-dom";
 import {Header} from "../../components/Header.tsx";
-import {Sidebar} from "./Sidebar.tsx";
+import {Sidebar} from "../../components/Sidebar.tsx";
 
 // ? Lot of code obtained from here for testing: https://codesandbox.io/p/sandbox/react-tiles-dnd-responsive-bd0ly?file=%2Fsrc%2Findex.tsx
 

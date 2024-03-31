@@ -2,6 +2,9 @@ import {createBrowserRouter} from "react-router-dom";
 import DashboardPage from "./pages/dashboard/DashboardPage.tsx";
 import _404Page from "./pages/404/404.tsx";
 import IndexPage from "./pages/index/IndexPage.tsx";
+import {SampleSidebar} from "./pages/samples/sidebar/SampleSidebar.tsx";
+import {SampleSidebarHeader} from "./pages/samples/sidebar_header/SampleSidebarHeader.tsx";
+import {SampleModal} from "./pages/samples/modal/SampleModal.tsx";
 
 // ? Routing - see https://reactrouter.com/en/main
 
@@ -115,5 +118,13 @@ export const router = createBrowserRouter([
     {
         path: "/dash-4",
         element: <DashboardPage tiles={tileset_weird}/>,
+    },
+    {
+        path: "/sidebar",
+        element: <SampleSidebar/>,
+    },
+    {
+        path: "/sidebar_header",
+        element: <SampleSidebarHeader/>,
     },
 ]);

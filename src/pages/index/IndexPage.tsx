@@ -15,6 +15,7 @@ function IndexPage({ user }: Props) {
               <div className="text-center">
                   <h1>Budget-19 Home Page</h1>
                   <p><Link to="/dash">Dash</Link>•<Link to="/dash-2">With column</Link>•<Link to="/dash-3">With lots of tiles</Link>•<Link to="/dash-4">With weird stuff</Link></p>
+                  <p><Link to="/sample_sidebar">Sidebar</Link>•<Link to="/sample_sidebar_header">Sidebar & Header</Link>•<Link to="/sample_modal">Modal</Link></p>
               </div>
           </FullscreenCenter>
           <Footer/>
