@@ -120,11 +120,11 @@ export const router = createBrowserRouter([
         element: <DashboardPage tiles={tileset_weird}/>,
     },
     {
-        path: "/sidebar",
+        path: "/sample_sidebar",
         element: <SampleSidebar/>,
     },
     {
-        path: "/sidebar_header",
+        path: "/sample_sidebar_header",
         element: <SampleSidebarHeader/>,
     },
     {
