@@ -16,51 +16,21 @@ export function Sidebar({ children }: Props) {
     return <div className="row flex-grow-1" style={{marginRight: "0", minHeight: "0"}}>
         <div className={"col-2 d-flex flex-column flex-shrink-0 p-3 text-dark border-end"} style={{minHeight: "0"}}>
             <a href="/public" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
-                <img src="https://picsum.photos/30/30" style={{marginRight: "10px", width: "30px", height: "30px"}}/>
+                <img className="rounded-1" src="/30x30_dummy.png" style={{marginRight: "10px", width: "30px", height: "30px"}}/>
                 <span className="fs-4">{use_narrow ? "Narrow" : "Sidebar"}</span>
             </a>
             <hr/>
             <ul className="nav nav-pills flex-column mb-auto">
-                <li className="nav-item">
-                    <a href="#" className="nav-link active" aria-current="page">
-                        <div className="bi me-2" style={{display: "inline", width: "16px", height: "16px"}}>
-                            <img src="https://picsum.photos/16/16"/>
-                        </div>
-                        Lorem Ipsum
-                    </a>
-                </li>
-                <li>
-                    <a href="#" className="nav-link text-dark">
-                        <div className="bi me-2" style={{display: "inline", width: "16px", height: "16px"}}>
-                            <img src="https://picsum.photos/16/16"/>
-                        </div>
-                        Lorem Ipsum
-                    </a>
-                </li>
-                <li>
-                    <a href="#" className="nav-link text-dark">
-                        <div className="bi me-2" style={{display: "inline", width: "16px", height: "16px"}}>
-                            <img src="https://picsum.photos/16/16"/>
-                        </div>
-                        Lorem Ipsum
-                    </a>
-                </li>
-                <li>
-                    <a href="#" className="nav-link text-dark">
-                        <div className="bi me-2" style={{display: "inline", width: "16px", height: "16px"}}>
-                            <img src="https://picsum.photos/16/16"/>
-                        </div>
-                        Lorem Ipsum
-                    </a>
-                </li>
-                <li>
-                    <a href="#" className="nav-link text-dark">
-                        <div className="bi me-2" style={{display: "inline", width: "16px", height: "16px"}}>
-                            <img src="https://picsum.photos/16/16"/>
-                        </div>
-                        Lorem Ipsum
-                    </a>
-                </li>
+                {
+                    [...Array(5)].map((_, n) => <li className="nav-item">
+                        <a href="#" className={(n == 1 ? "active " : "text-dark ") + "nav-link"} aria-current="page">
+                            <div className="bi me-2" style={{display: "inline", width: "16px", height: "16px"}}>
+                                <img className="rounded-1" src="/16x16_dummy.png"/>
+                            </div>
+                            Lorem Ipsum
+                        </a>
+                    </li>)
+                }
             </ul>
             <hr/>
             <div className="dropdown">
