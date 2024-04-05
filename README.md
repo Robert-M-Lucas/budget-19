@@ -12,11 +12,16 @@ Initial page setup (e.g. title): `/index.html`
 
 Router config ([docs](https://reactrouter.com/en/main)): `/src/router.tsx`
 
+See other folders in `src` for example files within.
+
 ## Commands
 
 Sync packages: `npm install`
 
 Serve webpage locally: `npm run dev`
+
+> If you use WebStorm (Jetbrains), `npm run dev` and firebase deployment
+will be automatically set up as run configs from files in `.run`
 
 ### Firebase
 
