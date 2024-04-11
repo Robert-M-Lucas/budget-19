@@ -1,7 +1,15 @@
 import {Link} from "react-router-dom";
 
-export function Footer() {
-    return <footer className="pt-3 mt-4">
+
+type HeightUnit = 'px' | 'rem' | 'vh';
+type HeightProp = `${number}${HeightUnit}` | "0";
+
+interface Props {
+    margin?: HeightProp;
+}
+
+export function Footer({margin = "0"}: Props) {
+    return <footer style={{marginTop: margin}}>
         <hr className="my-0 w-100"/>
 
         <div style={{padding: "2.75rem 0"}}>
