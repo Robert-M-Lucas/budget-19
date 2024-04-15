@@ -4,7 +4,6 @@ import './utils/firebase.ts'
 import {RouterProvider} from "react-router-dom";
 import {router} from "./router.tsx";
 
-// ! Potentially temporary - UI Styling tbd
 import 'bootstrap/scss/bootstrap.scss'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
