@@ -93,20 +93,29 @@ const tileset_weird: Array<{ text: string; rows: number; cols: number }> = [
 ];
 
 export const router = createBrowserRouter([
+    // Header Links:
     {
         path: "/",
         element: <IndexPage/>,
         errorElement: <_404Page/>
     },
     {
+        path: "/dash",
+        element: <DashboardPage tiles={tileset_many}/>,
+    },
+    {
+        path: "/transactions",
+        element: <SampleModal/>,
+    },
+    // -->
+
+
+    {
         path: "/user-test",
         element: <IndexPage user={"testUserName"}/>,
         errorElement: <_404Page/>
     },
-    {
-        path: "/dash",
-        element: <DashboardPage tiles={tileset_defult}/>,
-    },
+
     {
         path: "/dash-2",
         element: <DashboardPage tiles={tileset_column}/>,
