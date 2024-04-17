@@ -12,7 +12,7 @@ function IndexPage({ user }: Props) {
     return (<>
             <div className="d-flex vh-100 flex-column">
                 <Header user={user}/>
-                <div className="row vw-100" style={{flexGrow: 1}}>
+                <div className="row vw-100" style={{flexGrow: 1, maxWidth: "99vw"}}>
                     <div className="col-6 p-0 d-flex justify-content-center align-items-center">
                         <div className="text-center">
                             <h1 className="fw-bold" style={{fontSize: "80px"}}>Budget-19</h1>
@@ -34,12 +34,14 @@ function IndexPage({ user }: Props) {
                             <div className="row">
                                 <div className="col p-2">
                                     <Link to="/login-page">
-                                        <button type="button" className="google-sign-in-button"></button>
+                                        <button type="button" className="login-with-google-btn">Sign in with Google
+                                        </button>
                                     </Link>
                                 </div>
                                 <div className="col p-2">
                                     <Link to="/login-page">
-                                        <button type="button" className="google-sign-in-button"></button>
+                                        <button type="button" className="login-with-ms-btn text-nowrap">Sign in with Microsoft
+                                        </button>
                                     </Link>
                                 </div>
                             </div>
