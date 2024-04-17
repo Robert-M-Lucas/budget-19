@@ -9,46 +9,46 @@ interface Props {
 }
 
 function IndexPage({ user }: Props) {
-  return (
-      <>
-      <Header user={user}/>
-          <div className="row vw-100" style={{height: "92vh"}}>
-              <div className="col-6 p-0 d-flex justify-content-center align-items-center">
-                  <div className="text-center">
-                      <h1 className="fw-bold" style={{fontSize: "80px"}}>Budget-19</h1>
-                      <p className="text-muted">Budgeting. Made difficult.</p>
-                  </div>
-              </div>
-              <div className="p-0 m-0" style={{
-                  position: "absolute",
-                  top: "30%",
-                  bottom: "30%",
-                  height: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, 0)",
-                  width: "1px",
-                  backgroundColor: "grey",
-              }}></div>
-              <div className="col-6 p-0 d-flex justify-content-center align-items-center">
-                  <div className="text-center">
-                      <h1 className="pb-4" style={{fontSize: "60px"}}>Login</h1>
-                      <div className="row">
-                          <div className="col p-2">
-                              <Link to="/login-page">
-                                  <button type="button" className="google-sign-in-button"
-                                          style={{width: "30px", height: "30px"}}></button>
-                              </Link>
-                          </div>
-                          <div className="col p-2">
-                              <button className="btn btn-primary">O</button>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          <Footer/>
-      </>
-  )
+    return (<>
+            <div className="d-flex vh-100 flex-column">
+                <Header user={user}/>
+                <div className="row vw-100" style={{flexGrow: 1}}>
+                    <div className="col-6 p-0 d-flex justify-content-center align-items-center">
+                        <div className="text-center">
+                            <h1 className="fw-bold" style={{fontSize: "80px"}}>Budget-19</h1>
+                            <p className="text-muted">Budgeting. Made difficult.</p>
+                        </div>
+                    </div>
+                    <div className="p-0 m-0" style={{
+                        position: "absolute",
+                        top: "30%",
+                        height: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, 0)",
+                        width: "1px",
+                        backgroundColor: "grey",
+                    }}></div>
+                    <div className="col-6 p-0 d-flex justify-content-center align-items-center">
+                        <div className="text-center">
+                            <h1 className="pb-2" style={{fontSize: "60px"}}>Login</h1>
+                            <div className="row">
+                                <div className="col p-2">
+                                    <Link to="/login-page">
+                                        <button type="button" className="google-sign-in-button"></button>
+                                    </Link>
+                                </div>
+                                <div className="col p-2">
+                                    <Link to="/login-page">
+                                        <button type="button" className="google-sign-in-button"></button>
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <Footer/>
+    </>);
 }
 
 export default IndexPage
