@@ -28,17 +28,18 @@ export function CSVUpload() {
                 .map((row) => row.split(","));
 
             const transactions = rows
-                .filter((row) => row[3] === "Card Transaction" || row[3] === "Faster Transaction") // filter by type
-                .map((row) => new Transaction().fromRow(row))
-                .filter((Transaction) => Transaction.isValid);
+                .filter((row) => row[3] === "Card payment" || row[3] === "Faster payment") // filter by type
+                .map((row) => new Transaction().fromRow(row));
+
+            const validTransactions = transactions.filter((transaction) => transaction.isValid);
             
-            if (transactions.length == 0) return setError("The uploaded CSV file has no valid transactions");
+            if (validTransactions.length == 0) return setError("The uploaded CSV file has no valid transactions");
                 
             // -------------------------------------------------------------------------------------
-            // TODO: STORE "transactions" IN THE DATABASE
+            // TODO: STORE "validTransactions" IN THE DATABASE
             // -------------------------------------------------------------------------------------
             
-            setSuccessMsg(`${transactions.length} transactions have been successfully imported`);
+            setSuccessMsg(`${validTransactions.length} valid transactions have been imported. (The CSV file contained ${transactions.length} total transactions).`);
             setTimeout(() => setSuccessMsg(null), 10000);
 
             setFile(undefined);
