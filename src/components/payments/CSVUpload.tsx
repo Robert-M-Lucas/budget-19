@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Payment } from "./Payment";
 import { FormError, FormSuccess } from "../Messages";
+import { Transaction } from "./Transaction";
 
 export function CSVUpload() {
     const [file, setFile] = useState<File>();
@@ -20,25 +20,25 @@ export function CSVUpload() {
     
         reader.onload = (event) => {
             const csvContent = event.target?.result;
-            if (!csvContent || csvContent instanceof ArrayBuffer) return setError("Unable to read uploaded CSV file")
+            if (!csvContent || csvContent instanceof ArrayBuffer) return setError("Unable to read uploaded CSV file");
 
             const rows = csvContent
                 .split("\n")
                 .slice(1)
-                .map((row) => row.split(","))
+                .map((row) => row.split(","));
 
-            const payments = rows
-                .filter((row) => row[3] === "Card payment" || row[3] === "Faster payment") // filter by type
-                .map((row) => new Payment().fromRow(row))
-                .filter((payment) => payment.isValid);
+            const transactions = rows
+                .filter((row) => row[3] === "Card Transaction" || row[3] === "Faster Transaction") // filter by type
+                .map((row) => new Transaction().fromRow(row))
+                .filter((Transaction) => Transaction.isValid);
             
-            if (payments.length == 0) return setError("The uploaded CSV file has no valid payments");
+            if (transactions.length == 0) return setError("The uploaded CSV file has no valid transactions");
                 
             // -------------------------------------------------------------------------------------
-            // TODO: STORE "payments" IN THE DATABASE
+            // TODO: STORE "transactions" IN THE DATABASE
             // -------------------------------------------------------------------------------------
             
-            setSuccessMsg(`${payments.length} payments have been successfully imported`);
+            setSuccessMsg(`${transactions.length} transactions have been successfully imported`);
             setTimeout(() => setSuccessMsg(null), 10000);
 
             setFile(undefined);
