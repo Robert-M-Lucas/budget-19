@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Transaction, emojis, formatDate, formatTime } from "./Transaction";
-import { FormError, FormSuccess } from "../Messages";
+import { Button, Modal, Form, Alert } from "react-bootstrap";
 
-export function InputTransaction() {
+export function InputTransaction({ show, setShow}: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [name, setName] = useState<string>("");
     const [category, setCategory] = useState<string>("");
 
@@ -15,9 +15,7 @@ export function InputTransaction() {
     const [error, setError] = useState<string | null>("");
     const [successMsg, setSuccessMsg] = useState<string | null>("");
 
-    function addTransaction(event: React.FormEvent<HTMLInputElement>) {
-        event.preventDefault();
-
+    function addTransaction() {
         setError(null);
         setSuccessMsg(null);
 
@@ -56,44 +54,30 @@ export function InputTransaction() {
         setAddress("");
     }
     
-    return <div>
-        <label htmlFor="name">Name:</label>
-        <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)} />
+    return <Modal show={show} onHide={() => setShow(false)}>
+        <Modal.Header closeButton>
+            <Modal.Title>Add Transaction</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <Form>
+                <Form.Control type="name" placeholder="Enter name" value={name} onChange={(e) => setName(e.target.value)} />
+                <Form.Control type="name" placeholder="Enter amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
+                <Form.Select onChange={(e) => setCategory(e.target.value)}>
+                    <option disabled={true} selected={true} key={0}>Choose a category</option>
+                    {Object.entries(emojis).map(([category, emoji], i) =>  <option value={category} key={i+1}>{emoji} {category}</option>)}
+                </Form.Select>
 
-        <br />
+                <Form.Control as="textarea" rows={3} placeholder="Enter Description (optional)" />
+                <Form.Control as="textarea" rows={3} placeholder="Enter Notes (optional)" />
+                <Form.Control as="textarea" rows={3} placeholder="Enter Address (optional)" />
+            </Form>
 
-        <label htmlFor="category">Category:</label>
-        <select id="category" onChange={(e) => setCategory(e.target.value)}>
-            <option disabled={true} selected={true} key={0}>Select an option</option>
-
-            {Object.entries(emojis).map(([category, emoji], i) =>  <option value={category} key={i+1}>{emoji} {category}</option>)}
-        </select>
-
-        <br />
-
-        <label htmlFor="amount">Amount:</label>
-        <input type="number" id="amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
-
-        <br />
-
-        <label htmlFor="description">Description (optional):</label>
-        <input type="text" id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
-
-        <br />
-
-        <label htmlFor="notes">Notes (optional):</label>
-        <input type="text" id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} />
-
-        <br />
-
-        <label htmlFor="address">Address (optional):</label>
-        <input type="text" id="address" value={address} onChange={(e) => setAddress(e.target.value)} />
-
-        <br />
-
-        <input type="button" value="Add Transaction" onClick={addTransaction} />
-        
-        <FormError error={error} />
-        <FormSuccess message={successMsg} />
-    </div>
+            {successMsg && <Alert variant="success">{successMsg}</Alert>}
+            {error && <Alert variant="danger">{error}</Alert>}
+        </Modal.Body>
+        <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShow(false)}>Close</Button>
+            <Button variant="primary" onClick={addTransaction}>Add Transaction</Button>
+        </Modal.Footer>
+    </Modal>
 }

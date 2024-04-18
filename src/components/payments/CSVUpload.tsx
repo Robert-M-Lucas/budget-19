@@ -1,21 +1,21 @@
 import { useState } from "react";
-import { FormError, FormSuccess } from "../Messages";
 import { Transaction } from "./Transaction";
+import { Alert, Button, Form, Modal } from "react-bootstrap";
 
-export function CSVUpload() {
-    const [file, setFile] = useState<File>();
-    
+export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [error, setError] = useState<string | null>();
     const [successMsg, setSuccessMsg] = useState<string | null>();
 
     const reader = new FileReader();
 
-    function handleUpload(event: React.FormEvent<HTMLInputElement>) {
-        event.preventDefault();
-        
+    function handleUpload() {
         setError(null);
         setSuccessMsg(null);
+        
+        const fileElement = document.getElementById("file") as HTMLInputElement | null;
+        if (!fileElement || fileElement.files?.length === 0) return setError("You haven't uploaded a CSV file");
 
+        const file = fileElement.files![0]; 
         if (!file) return setError("You haven't uploaded a CSV file");
     
         reader.onload = (event) => {
@@ -39,31 +39,30 @@ export function CSVUpload() {
             // TODO: STORE "validTransactions" IN THE DATABASE
             // -------------------------------------------------------------------------------------
             
-            setSuccessMsg(`${validTransactions.length} valid transactions have been imported. (The CSV file contained ${transactions.length} total transactions).`);
+            setSuccessMsg(`${validTransactions.length} valid transactions have been imported out of ${transactions.length} total transactions.`);
             setTimeout(() => setSuccessMsg(null), 10000);
 
-            setFile(undefined);
+            fileElement.value = "";
         };
 
         reader.readAsText(file);
     };
 
-    return <div>
-        <h1>Upload your csv file</h1>
+    return <Modal show={show} onHide={() => setShow(false)}>
+        <Modal.Header closeButton>
+            <Modal.Title>Upload CSV Transactions</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            <Form>
+                <Form.Control type="file" id="file" accept=".csv" />
+            </Form>
 
-        <input 
-            type="file" 
-            id="uploadFile" 
-            accept=".csv" 
-            multiple={false} 
-            onChange={(e) => setFile(e.target.files ? e.target.files[0] : undefined)}
-        />
-        
-        <br />
-
-        <input type="button" value="Upload CSV" onClick={handleUpload} />
-
-        <FormError error={error} />
-        <FormSuccess message={successMsg} />
-    </div>
+            {successMsg && <Alert variant="success">{successMsg}</Alert>}
+            {error && <Alert variant="danger">{error}</Alert>}
+        </Modal.Body>
+        <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShow(false)}>Close</Button>
+            <Button variant="primary" onClick={handleUpload}>Upload CSV</Button>
+        </Modal.Footer>
+    </Modal>
 }
