@@ -1,5 +1,6 @@
 import {createBrowserRouter} from "react-router-dom";
 import DashboardPage from "./pages/dashboard/DashboardPage.tsx";
+import Graphs from "./pages/Graphs/Graphs.tsx";
 import _404Page from "./pages/404/404.tsx";
 import IndexPage from "./pages/index/IndexPage.tsx";
 import {SampleSidebar} from "./pages/samples/sidebar/SampleSidebar.tsx";
@@ -102,6 +103,10 @@ export const router = createBrowserRouter([
         path: "/user-test",
         element: <IndexPage user={"testUserName"}/>,
         errorElement: <_404Page/>
+    },
+    {
+        path: "/graphs",
+        element: <Graphs />,
     },
     {
         path: "/dash",

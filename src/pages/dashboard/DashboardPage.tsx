@@ -15,8 +15,9 @@ interface Props {
 const render: RenderTileFunction<{ text: string; rows: number; cols: number }> = ({ data, isDragging }) => (
     <div style={{ padding: ".75rem", width: "100%" }}>
         <div className={`tile card ${isDragging ? "dragging" : ""}`}
-             style={{ width: "100%", height: "100%" }} >
-            {data.text} {isDragging ? "DRAGGING" : null}
+                style={{ width: "100%", height: "100%" }}>
+            <strong>{data.text}</strong>
+            {isDragging ? "AHHH" : null}
         </div>
     </div>
 );
@@ -28,8 +29,6 @@ const tileSize = (tile: { text: string; rows: number; cols: number }) => ({
 export default function Dashboard(props: Props) {
     const {width} = useWindowDimensions();
     const columns = Math.max(Math.floor(width / 200), 1);
-
-
     return <>
         <div className="vh-100 d-flex flex-column">
             <Header user="testUser"/>
