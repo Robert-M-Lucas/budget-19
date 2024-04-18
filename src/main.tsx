@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import './utils/firebase.ts'
 import { Button } from 'react-bootstrap';
-import { CSVUpload } from './components/payments/CSVUpload.tsx';
-import { InputTransaction } from './components/payments/InputTransaction.tsx';
+import { CSVUpload } from './components/transactions/CSVUpload.tsx';
+import { InputTransaction } from './components/transactions/InputTransaction.tsx';
 
 // import {RouterProvider} from "react-router-dom";
 // import {router} from "./router.tsx";
