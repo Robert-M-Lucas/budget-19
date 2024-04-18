@@ -39,7 +39,7 @@ export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dis
             // TODO: STORE "validTransactions" IN THE DATABASE
             // -------------------------------------------------------------------------------------
             
-            setSuccessMsg(`${validTransactions.length} valid transactions have been imported out of ${transactions.length} total transactions.`);
+            setSuccessMsg(`${validTransactions.length} valid transactions have been imported out of ${transactions.length} total transactions`);
             setTimeout(() => setSuccessMsg(null), 10000);
 
             fileElement.value = "";

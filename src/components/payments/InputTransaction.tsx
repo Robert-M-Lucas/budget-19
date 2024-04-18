@@ -4,7 +4,7 @@ import { Button, Modal, Form, Alert } from "react-bootstrap";
 
 export function InputTransaction({ show, setShow}: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [name, setName] = useState<string>("");
-    const [category, setCategory] = useState<string>("");
+    const [category, setCategory] = useState<string>("Income");
 
     const [amount, setAmount] = useState<string>("");
 
@@ -63,13 +63,12 @@ export function InputTransaction({ show, setShow}: { show: boolean, setShow: Rea
                 <Form.Control type="name" placeholder="Enter name" value={name} onChange={(e) => setName(e.target.value)} />
                 <Form.Control type="name" placeholder="Enter amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
                 <Form.Select onChange={(e) => setCategory(e.target.value)}>
-                    <option disabled={true} selected={true} key={0}>Choose a category</option>
-                    {Object.entries(emojis).map(([category, emoji], i) =>  <option value={category} key={i+1}>{emoji} {category}</option>)}
+                    {Object.entries(emojis).map(([category, emoji], i) =>  <option value={category} key={i}>{emoji} {category}</option>)}
                 </Form.Select>
 
-                <Form.Control as="textarea" rows={3} placeholder="Enter Description (optional)" />
-                <Form.Control as="textarea" rows={3} placeholder="Enter Notes (optional)" />
-                <Form.Control as="textarea" rows={3} placeholder="Enter Address (optional)" />
+                <Form.Control as="textarea" rows={3} placeholder="Enter Description (optional)" onChange={(e) => setDescription(e.target.value)} />
+                <Form.Control as="textarea" rows={3} placeholder="Enter Notes (optional)" onChange={(e) => setNotes(e.target.value)} />
+                <Form.Control as="textarea" rows={3} placeholder="Enter Address (optional)"onChange={(e) => setAddress(e.target.value)} />
             </Form>
 
             {successMsg && <Alert variant="success">{successMsg}</Alert>}
