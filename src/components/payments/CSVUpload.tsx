@@ -32,8 +32,7 @@ export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dis
                 .map((row) => new Transaction().fromRow(row));
 
             const validTransactions = transactions.filter((transaction) => transaction.isValid);
-            
-            if (validTransactions.length == 0) return setError("The uploaded CSV file has no valid transactions");
+            if (validTransactions.length === 0) return setError("The uploaded CSV file has no valid transactions");
                 
             // -------------------------------------------------------------------------------------
             // TODO: STORE "validTransactions" IN THE DATABASE
