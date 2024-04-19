@@ -22,7 +22,7 @@ export function Sidebar({ children }: Props) {
             <hr/>
             <ul className="nav nav-pills flex-column mb-auto">
                 {
-                    [...Array(5)].map((_, n) => <li className="nav-item">
+                    [...Array(5)].map((_, n) => <li className="nav-item" key={n}>
                         <a href="#" className={(n == 1 ? "active " : "text-dark ") + "nav-link"} aria-current="page">
                             <div className="bi me-2" style={{display: "inline", width: "16px", height: "16px"}}>
                                 <img className="rounded-1" src="/16x16_dummy.png"/>
