@@ -9,24 +9,26 @@ import React, {useState} from "react";
 import Papa from "papaparse";
 import {Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 
-export default function Dashboard(){
+type dataPoint = { date: string; moneyIn: number; moneyOut: number };
 
-    const [data, setData] = useState([[]]);
+export default function GraphDashboard(){
+    const [data, setData] = useState<dataPoint[][]>([[]]);
     const [index, setIndex] = useState(0);
     const dataKeys = ["moneyIn", "moneyOut", "sum"];
 
     const tiles = [
-        {d: data[0], cols:3, rows: 1},
-        {d: data[1], cols:3, rows: 1},
-        {d: data[2], cols:3, rows: 1}
+        {d: data[0], cols:3, rows: 2},
+        {d: data[1], cols:2, rows: 2},
+        {d: data[2], cols:2, rows: 2}
     ];
     const tileSize = (tile: typeof tiles[0]) => ({
         colSpan: tile.cols,
         rowSpan: tile.rows
     });
-    const render: RenderTileFunction<typeof tiles[0]> = ({ data }) => (
-        <div style={{ padding: ".75rem", width: "100%" }}>
-            <div className={`tile card : ""}`} style={{ width: "100%", height: "100%" }}>
+    const render: RenderTileFunction<typeof tiles[0]> = ({ data, isDragging }) => (
+        <div style={{padding: ".75rem", width: "100%"}}>
+            <div className={`tile card ${isDragging ? "dragging" : ""}`}
+                 style={{width: "100%", height: "100%"}}>
                 <ResponsiveContainer width={"100%"} height={"100%"}>
                     <LineChart data={data.d}>
                         <XAxis dataKey="date"/>
@@ -39,24 +41,28 @@ export default function Dashboard(){
         </div>
     );
 
-    const cumulate = (data) => {
+    const cumulate = (data: number[]): number[] => {
         let total = 0;
         return data.map(value => {
             total += value;
             return total;
         });
     }
-    const splitByMonth = (data) => {
-        const result = [];
-        let currMonth = null;
-        let currArr = [];
 
-        data.forEach( item => {
-            const [day, month, year] = item.date.split('/').map(Number);
+    const splitByMonth = (data: dataPoint[]) => {
+        const result: dataPoint[][] = [];
+        let currMonth: string = "";
+        let currArr: dataPoint[] = [];
+
+        data.forEach((item: dataPoint) => {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const [_day, month, year] = item.date.split('/').map(Number);
             const dateKey = `${month}/${year}`;
 
+            console.log(dateKey);
             if (dateKey !== currMonth) {
                 if (currArr.length) {
+                    console.log("Push");
                     result.push(currArr);
                 }
                 currMonth = dateKey;
@@ -64,15 +70,18 @@ export default function Dashboard(){
             }
             currArr.push(item)
         });
-        if (result.length) {
+
+        if (currArr.length) {
             result.push(currArr);
         }
         return result;
     }
-    const finalParsing = (data) => {
-        const result = [];
-        data = splitByMonth(data)
-        data.forEach( arr => {
+
+    const finalParsing = (data: dataPoint[]): dataPoint[][] => {
+        const result: dataPoint[][] = [];
+        const data_split = splitByMonth(data);
+
+        data_split.forEach(arr => {
             const moneyInData = arr.map(item => item.moneyIn);
             const moneyOutData = arr.map(item => item.moneyOut);
 
@@ -85,19 +94,28 @@ export default function Dashboard(){
                 moneyOut: cumulativeMoneyOut[index],
                 sum: cumulativeMoneyIn[index] + cumulativeMoneyOut[index]
             }));
+
             result.push(updatedData);
-        })
+        });
+
         return(result);
     }
-    const handleFileChange = (e: Event) => {
-        // @ts-ignore
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         const file = e.target.files[0];
         if (file) {
             Papa.parse(file, {
                 complete: (results) => {
-                    const parsedData = results.data.map((row) => ({
+                    const parsedData: dataPoint[] = results.data.map((row) => ({
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
                         moneyIn: row['Money In'] ? parseFloat(row['Money In']) : 0,
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
                         moneyOut: row['Money Out'] ? parseFloat(row['Money Out']) : 0,
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
                         date: String(row['Date'])
                     }));
                     setData(finalParsing(parsedData));
@@ -107,12 +125,13 @@ export default function Dashboard(){
             });
         }
     };
-    const handleIndexChange = (e) => {
+
+    const handleIndexChange = () => {
         setIndex((index + 1) % 3)
     }
 
     const {width} = useWindowDimensions();
-    const columns = Math.max(Math.floor(width / 400), 1);
+    const columns = Math.max(Math.floor(width / 200), 1);
 
     return (
         <div className="vh-100 d-flex flex-column">
