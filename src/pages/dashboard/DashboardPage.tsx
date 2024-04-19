@@ -5,6 +5,10 @@ import useWindowDimensions from "../../hooks/WindowDimensionsHook.tsx";
 import {Link} from "react-router-dom";
 import {Header} from "../../components/Header.tsx";
 import {Sidebar} from "../../components/Sidebar.tsx";
+import { Button } from "react-bootstrap";
+import { CSVUpload } from "../../components/transactions/CSVUpload.tsx";
+import { InputTransaction } from "../../components/transactions/InputTransaction.tsx";
+import { useState } from "react";
 
 // ? Lot of code obtained from here for testing: https://codesandbox.io/p/sandbox/react-tiles-dnd-responsive-bd0ly?file=%2Fsrc%2Findex.tsx
 
@@ -28,11 +32,23 @@ const tileSize = (tile: { text: string; rows: number; cols: number }) => ({
 export default function Dashboard(props: Props) {
     const {width} = useWindowDimensions();
     const columns = Math.max(Math.floor(width / 200), 1);
-
+    
+    const [showCSVModal, setShowCSVModal] = useState(false);
+    const [showTransactionModal, setShowTransactionModal] = useState(false);
 
     return <>
         <div className="vh-100 d-flex flex-column">
+            <Header/>
             <Header user="testUser"/>
+
+            {/* TODO: MOVE TO CORRECT POSITION ON DASHBOARD */}
+            <div> 
+                <Button variant="primary" onClick={() => setShowCSVModal(true)}>Upload CSV</Button>
+                <CSVUpload show={showCSVModal} setShow={setShowCSVModal} />
+
+                <Button variant="primary" onClick={() => setShowTransactionModal(true)}>Add Transaction</Button>
+                <InputTransaction show={showTransactionModal} setShow={setShowTransactionModal} />
+            </div>
             <Sidebar>
                 <div className="App ps-5 pe-5 mt-3">
                     <h1>Testing Tiles</h1>

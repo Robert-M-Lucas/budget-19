@@ -10,9 +10,6 @@ interface Props {
 }
 
 function IndexPage({ user }: Props) {
-    // Get a reference to the "Sign in with Google" button
-
-
     return (<>
         <div className="d-flex vh-100 flex-column">
             <Header user={user}/>
