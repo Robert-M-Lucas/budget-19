@@ -1,11 +1,11 @@
 import useWindowDimensions from "../hooks/WindowDimensionsHook.tsx";
 import "../assets/css/Header.css"
 
-// interface Props {
-//     user?: string
-// }
+interface Props {
+    user?: string
+}
 
-export function Header() {
+export function Header({user} : Props) {
     const {width, height} = useWindowDimensions();
     const aspect_ratio = (width == 0 ? 1 : width) / (height == 0 ? 1 : height);
     const use_narrow = aspect_ratio < 0.7;
@@ -26,6 +26,7 @@ export function Header() {
                     {/*Links to transactions page with table of expenses*/}
                     <li><a href="/transactions" className="header-item">Transactions</a></li>
 
+                    <li>{user}</li>
                 </ul>
     </header>;
 }
