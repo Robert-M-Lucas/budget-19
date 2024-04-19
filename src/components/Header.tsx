@@ -1,11 +1,11 @@
 import useWindowDimensions from "../hooks/WindowDimensionsHook.tsx";
 import "../assets/css/Header.css"
 
-interface Props {
-    user?: string
-}
+// interface Props {
+//     user?: string
+// }
 
-export function Header({ user }: Props) {
+export function Header() {
     const {width, height} = useWindowDimensions();
     const aspect_ratio = (width == 0 ? 1 : width) / (height == 0 ? 1 : height);
     const use_narrow = aspect_ratio < 0.7;
