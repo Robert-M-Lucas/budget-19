@@ -38,6 +38,7 @@ export default function Dashboard(props: Props) {
 
     return <>
         <div className="vh-100 d-flex flex-column">
+            <Header/>
             <Header user="testUser"/>
 
             {/* TODO: MOVE TO CORRECT POSITION ON DASHBOARD */}
@@ -48,7 +49,6 @@ export default function Dashboard(props: Props) {
                 <Button variant="primary" onClick={() => setShowTransactionModal(true)}>Add Transaction</Button>
                 <InputTransaction show={showTransactionModal} setShow={setShowTransactionModal} />
             </div>
-
             <Sidebar>
                 <div className="App ps-5 pe-5 mt-3">
                     <h1>Testing Tiles</h1>
