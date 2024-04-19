@@ -15,7 +15,7 @@ const LineCht: React.FC<Props> = ({ data,key }) => {
                     <XAxis dataKey="date"/>
                     <YAxis/>
                     <Tooltip/>
-                    <Line type="monotone" dataKey={key} stroke="#8884d8"/>
+                    <Line type="monotone" dataKey="moneyIn" stroke="#8884d8"/>
                 </LineChart>
             </ResponsiveContainer>
         </div>

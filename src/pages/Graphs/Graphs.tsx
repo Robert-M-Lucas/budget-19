@@ -10,15 +10,13 @@ import React, {useState} from "react";
 import Papa from "papaparse";
 
 export default function Dashboard(){
-    const {width} = useWindowDimensions();
-    const columns = Math.max(Math.floor(width / 200), 1);
 
     const [data, setData] = useState([[]]);
 
     const tiles = [
-        {data: data[0], cols:1, rows: 1},
-        {data: data[1], cols:2, rows: 2},
-        {data: data[3], cols:3, rows: 3}
+        {d: data[0], cols:1, rows: 1},
+        {d: data[1], cols:2, rows: 2},
+        {d: data[2], cols:3, rows: 3}
     ];
     const tileSize = (tile: typeof tiles[0]) => ({
         colSpan: tile.cols,
@@ -28,7 +26,7 @@ export default function Dashboard(){
         <div style={{ padding: ".75rem", width: "100%" }}>
             <div className={`tile card ${isDragging ? "dragging" : ""}`}
                  style={{ width: "100%", height: "100%" }}>
-                <Cumulative data={data.data} key="moneyIn"/>
+                <Cumulative data={data.d} key="moneyIn"/>
                 {isDragging ? "AHHH" : null}
             </div>
         </div>
@@ -103,6 +101,9 @@ export default function Dashboard(){
         }
     };
 
+    const {width} = useWindowDimensions();
+    const columns = Math.max(Math.floor(width / 200), 1);
+
     return (
         <div className="vh-100 d-flex flex-column">
             <Header user="testUser"/>
@@ -111,14 +112,18 @@ export default function Dashboard(){
                     <h1>Testing Graph Tiles</h1>
                     <input type="file" accept=".csv" onChange={handleFileChange}/>
                     <p><Link to={"/"}>Go back</Link></p>
-                    {data.length > 0 && <TilesContainer
+                    <TilesContainer
                         data={tiles}
                         renderTile={render}
                         tileSize={tileSize}
                         ratio={1}
                         columns={columns}
-                    ></TilesContainer>}
-
+                    ></TilesContainer>
+                    <Cumulative data={data[0]} key="moneyIn"/>
+                    <div>
+                        <h2>Data:</h2>
+                        <pre>{JSON.stringify(data, null, 2)}</pre>
+                    </div>
                 </div>
             </Sidebar>
         </div>
