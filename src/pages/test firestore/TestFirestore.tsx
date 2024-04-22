@@ -11,6 +11,7 @@ import {
 import {faker, fakerEN_GB} from "@faker-js/faker";
 import {getCurrentBalance} from "../../utils/transaction_utils.ts";
 import {signInWithGoogle} from "../../utils/authentication.ts";
+import {Header} from "../../components/Header.tsx";
 
 function writeSampleData() {
     if (auth.currentUser === null) {
@@ -55,6 +56,7 @@ export  function TestFirestorePage() {
 
     if (auth.currentUser === null) {
         return <>
+                <Header/>
                 <FullscreenCenter>
                     <div className="text-center">
                         <h1>Not Logged In</h1>
@@ -71,8 +73,9 @@ export  function TestFirestorePage() {
 
     return (
         <>
+            <Header/>
             <div className="text-center">
-                <h1>Logged In - {auth.currentUser.uid}</h1>
+                <h1>Logged In - {auth.currentUser.uid} - {auth.currentUser.displayName}</h1>
                 <button type="button" className="login-with-google-btn" onClick={signInWithGoogle}>
                     Sign in with Google
                 </button>
