@@ -4,6 +4,7 @@ import {collection,
 import {User} from "firebase/auth";
 import {db} from "./firebase.ts";
 
+
 export class Transaction {
     private docName?: string;
     public address: string;
@@ -199,52 +200,3 @@ export async function overwriteTransactionsBatched(user: User, docName: string[]
         await batch.commit();
     }
 }
-
-
-/*
-function examples() {
-    if (auth.currentUser != null) {
-        const user = auth.currentUser;
-        console.log("Logged in as: " + user.uid)
-
-        // Get transactions (and log them)
-        getTransactions(user).then((t) => {
-            console.log(t);
-        });
-
-        // Get transactions with cost < 26 (and log them)
-        getTransactionsFilter(auth.currentUser, where("amount", "<", 26)).then((t) => {
-            console.log("< 26:");
-            console.log(t);
-        });
-
-        // Create new transaction
-        // IMPORTANT: Transaction doesn't have docName set here
-        const t = new Transaction(
-            fakerEN_GB.location.streetAddress() + "\n" + fakerEN_GB.location.city() + "\n" + fakerEN_GB.location.zipCode(),
-            parseFloat(faker.finance.amount({min: 0.5, max: 1000})),
-            faker.word.noun(),
-            faker.finance.currency().code,
-            faker.date.past(),
-            faker.lorem.sentence(),
-            faker.internet.emoji(),
-            faker.word.noun(),
-            faker.lorem.sentence(),
-            user.uid
-        );
-
-        // Write new transaction
-        // IMPORTANT: This returns the same Transaction with docName set as it now has a reference on the server
-        writeNewTransaction(user, t).then((t) => {
-            console.log("Created entry");
-
-            t.amount *= 4;
-            // Overwrite created transaction
-            // IMPORTANT: Not possible without a known docName
-            overwriteTransaction(user, t.forceGetDocName(), t).then(() => console.log("Overwrote entry"));
-        });
-    } else {
-        console.log("Not logged in");
-    }
-}
-*/

@@ -9,6 +9,8 @@ import {
     writeNewTransaction
 } from "../../utils/firestore.ts";
 import {faker, fakerEN_GB} from "@faker-js/faker";
+import {getCurrentBalance} from "../../utils/transaction_utils.ts";
+import {signInWithGoogle} from "../../utils/authentication.ts";
 
 function writeSampleData() {
     if (auth.currentUser === null) {
@@ -19,7 +21,7 @@ function writeSampleData() {
     console.log("Adding sample data");
     const t = new Transaction(
         fakerEN_GB.location.streetAddress() + ", " + fakerEN_GB.location.city() + ", " + fakerEN_GB.location.zipCode(),
-        parseFloat(faker.finance.amount({min: 0.5, max: 1000})),
+        parseFloat(faker.finance.amount({min: -1000, max: 1000})),
         faker.word.noun(),
         faker.finance.currency().code,
         faker.date.past().toISOString(),
@@ -37,6 +39,7 @@ function writeSampleData() {
 export  function TestFirestorePage() {
     const [authResolved, setAuthResolved] = useState(false);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [balance, setBalance] = useState(0);
     const [update ,setUpdate] = useState(0);
 
     if (!authResolved) {
@@ -55,25 +58,39 @@ export  function TestFirestorePage() {
                 <FullscreenCenter>
                     <div className="text-center">
                         <h1>Not Logged In</h1>
+                        <button type="button" className="login-with-google-btn" onClick={signInWithGoogle}>
+                            Sign in with Google
+                        </button>
                     </div>
                 </FullscreenCenter>
         </>;
     }
 
     getTransactions(auth.currentUser).then((t) => setTransactions(t));
+    getCurrentBalance(auth.currentUser).then((b) => setBalance(b));
 
     return (
         <>
             <div className="text-center">
                 <h1>Logged In - {auth.currentUser.uid}</h1>
+                <button type="button" className="login-with-google-btn" onClick={signInWithGoogle}>
+                    Sign in with Google
+                </button>
             </div>
-            <button onClick={() => {writeSampleData(); setUpdate(update + 1);}}>Add Sample Transaction</button>
+            <button onClick={() => {
+                writeSampleData();
+                setUpdate(update + 1);
+            }}>Add Sample Transaction
+            </button>
+            <p>
+                Balance: {balance}
+            </p>
             <p>
                 Transactions: <br/>
             </p>
             {
                 transactions.map((t) => <div key={t.forceGetDocName()}>
-                    <textarea readOnly={true} style={{width: "100%", height: "200px"}} value={JSON.stringify(t, null, 4)}/>
+                    <textarea readOnly={true} style={{width: "100%", height: "320px"}} value={JSON.stringify(t, null, 4)}/>
                     <button onClick={() => {deleteTransaction(t.forceGetDocName()).then(() => setUpdate(update + 1))}}>Delete</button>
                     <button onClick={() => {
                         if (auth.currentUser != null) {
