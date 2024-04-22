@@ -1,5 +1,6 @@
 import {collection,
-    deleteDoc, doc, DocumentSnapshot, getDocs, query, QueryFieldFilterConstraint, setDoc, SnapshotOptions, where, writeBatch} from "firebase/firestore";
+    deleteDoc, doc, DocumentSnapshot, getDocs, limit, query, QueryFieldFilterConstraint, setDoc, SnapshotOptions,
+    startAfter, where, writeBatch} from "firebase/firestore";
 import {User} from "firebase/auth";
 import {db} from "./firebase.ts";
 
@@ -77,10 +78,19 @@ export class Transaction {
 
 const BATCH_SIZE = 500;
 
-
 // Returns all transactions for the given `user` with the `docName` attribute set
 export async function getTransactions(user: User): Promise<Transaction[]> {
     const q = query(collection(db, "Transactions"), where("uid", "==", user.uid));
+    const ts: Transaction[] = [];
+    await getDocs(q).then((qs) =>
+        qs.forEach((q) => ts.push(Transaction.fromFirestore(q, {})))
+    );
+    return ts;
+}
+
+// Returns `pageSize` transactions for the given `user` with the `docName` attribute set
+export async function getTransactionsPage(user: User, pageSize: number, page: number): Promise<Transaction[]> {
+    const q = query(collection(db, "Transactions"), where("uid", "==", user.uid), startAfter(page * pageSize), limit(pageSize));
     const ts: Transaction[] = [];
     await getDocs(q).then((qs) =>
         qs.forEach((q) => ts.push(Transaction.fromFirestore(q, {})))
@@ -112,7 +122,7 @@ export async function getTransactionsByDocName(user: User, docName: string): Pro
 }
 
 // Returns all transactions for the given `user` with the `filters` applied
-export async function getTransactionsFilter(user: User, ...filters: QueryFieldFilterConstraint[]): Promise<Transaction[]> {
+export async function getTransactionsFilterOrderBy(user: User, ...filters: QueryFieldFilterConstraint[]): Promise<Transaction[]> {
     const q = query(collection(db, "Transactions"), where("uid", "==", user.uid), ...filters);
     const ts: Transaction[] = [];
     await getDocs(q).then((qs) =>
