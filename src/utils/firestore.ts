@@ -1,6 +1,7 @@
-import {collection, doc, DocumentSnapshot, getDocs, query, QueryFieldFilterConstraint, setDoc, SnapshotOptions, where, writeBatch} from "firebase/firestore";
+import {collection,
+    deleteDoc, doc, DocumentSnapshot, getDocs, query, QueryFieldFilterConstraint, setDoc, SnapshotOptions, where, writeBatch} from "firebase/firestore";
 import {User} from "firebase/auth";
-import {auth, db} from "./firebase.ts";
+import {db} from "./firebase.ts";
 
 export class Transaction {
     private docName?: string;
@@ -8,25 +9,23 @@ export class Transaction {
     public amount: number;
     public category: string;
     public currency: string;
-    public date: string;
+    public dateTime: string;
     public description: string;
     public emoji: string;
     public name: string;
     public notes: string;
-    public time: string;
     public readonly uid: string;
 
-    constructor (address: string, amount: number, category: string, currency: string, date: string, description: string, emoji: string, name: string, notes: string, time: string, uid: string) {
+    constructor (address: string, amount: number, category: string, currency: string, dateTime: string, description: string, emoji: string, name: string, notes: string, uid: string) {
         this.address = address;
         this.amount = amount;
         this.category = category;
         this.currency = currency;
-        this.date = date;
+        this.dateTime = dateTime;
         this.description = description;
         this.emoji = emoji;
         this.name = name;
         this.notes = notes;
-        this.time = time;
         this.uid = uid;
     }
 
@@ -61,7 +60,7 @@ export class Transaction {
         if (!data) {
             throw Error("No data returned for snapshot!");
         }
-        const t = new Transaction(data.address, data.amount, data.category, data.currency, data.date, data.description, data.emoji, data.name, data.notes, data.time, data.uid);
+        const t = new Transaction(data.address, data.amount, data.category, data.currency, data.dateTime, data.description, data.emoji, data.name, data.notes, data.uid);
         t.docName = snapshot.id;
         return t;
     }
@@ -137,6 +136,11 @@ export async function writeNewTransaction(user: User, transaction: Transaction):
     return transaction;
 }
 
+// Deletes a transaction
+export async function deleteTransaction(docName: string): Promise<void> {
+    await deleteDoc(doc(collection(db, "Transactions"), docName));
+}
+
 /*
  Overwrites an existing transaction in Firestore
 
@@ -186,7 +190,9 @@ export async function overwriteTransactionsBatched(user: User, docName: string[]
     }
 }
 
-export function examples() {
+
+/*
+function examples() {
     if (auth.currentUser != null) {
         const user = auth.currentUser;
         console.log("Logged in as: " + user.uid)
@@ -204,16 +210,16 @@ export function examples() {
 
         // Create new transaction
         // IMPORTANT: Transaction doesn't have docName set here
-        const t = new Transaction("addr",
-            12,
-            "cat",
-            "GBP",
-            "00/00/00",
-            "desc",
-            "e",
-            "name",
-            "notes",
-            "00:00",
+        const t = new Transaction(
+            fakerEN_GB.location.streetAddress() + "\n" + fakerEN_GB.location.city() + "\n" + fakerEN_GB.location.zipCode(),
+            parseFloat(faker.finance.amount({min: 0.5, max: 1000})),
+            faker.word.noun(),
+            faker.finance.currency().code,
+            faker.date.past(),
+            faker.lorem.sentence(),
+            faker.internet.emoji(),
+            faker.word.noun(),
+            faker.lorem.sentence(),
             user.uid
         );
 
@@ -231,6 +237,4 @@ export function examples() {
         console.log("Not logged in");
     }
 }
-
-auth.onAuthStateChanged(() => examples())
-
+*/
