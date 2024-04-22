@@ -6,6 +6,7 @@ import {SampleSidebar} from "./pages/samples/sidebar/SampleSidebar.tsx";
 import {SampleSidebarHeader} from "./pages/samples/sidebar_header/SampleSidebarHeader.tsx";
 import {SampleModal} from "./pages/samples/modal/SampleModal.tsx";
 import GraphDashboard from "./pages/Graphs/Graphs.tsx";
+import {TestFirestorePage} from "./pages/test firestore/TestFirestore.tsx";
 
 // ? Routing - see https://reactrouter.com/en/main
 
@@ -142,5 +143,9 @@ export const router = createBrowserRouter([
     {
         path: "/sample_modal",
         element: <SampleModal/>,
+    },
+    {
+        path: "/test",
+        element: <TestFirestorePage/>,
     },
 ]);
