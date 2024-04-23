@@ -4,8 +4,7 @@ import {where} from "firebase/firestore";
 
 export async function getCurrentBalance(user: User): Promise<number> {
     const transactions = await getTransactions(user);
-    let balance = 0;
-    transactions.forEach(transaction => {balance += transaction.amount;});
+    const balance = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
     return Math.round(balance * 100) / 100;
 }
 
