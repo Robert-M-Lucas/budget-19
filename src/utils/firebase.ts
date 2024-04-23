@@ -21,6 +21,7 @@ export const auth = getAuth(app); // Initialize Firebase Authentication
 export const db = getFirestore(app);
 
 if (import.meta.env.DEV) {
+    console.log("Connecting to emulators");
     connectAuthEmulator(auth, "http://localhost:9099");
     connectFirestoreEmulator(db, "localhost", 8080);
 }
