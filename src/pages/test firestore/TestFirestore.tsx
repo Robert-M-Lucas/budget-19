@@ -3,7 +3,7 @@ import {auth} from "../../utils/firebase.ts";
 import {useState} from "react";
 import {
     deleteTransaction,
-    getTransactions,
+    getTransactionsFilterOrderBy,
     overwriteTransaction,
     Transaction,
     writeNewTransaction
@@ -12,6 +12,7 @@ import {faker, fakerEN_GB} from "@faker-js/faker";
 import {getCurrentBalance} from "../../utils/transaction_utils.ts";
 import {signInWithGoogle} from "../../utils/authentication.ts";
 import {Header} from "../../components/Header.tsx";
+import { orderBy } from "firebase/firestore";
 
 function writeSampleData() {
     if (auth.currentUser === null) {
@@ -25,7 +26,7 @@ function writeSampleData() {
         parseFloat(faker.finance.amount({min: -1000, max: 1000})),
         faker.word.noun(),
         faker.finance.currency().code,
-        faker.date.past().toISOString(),
+        faker.date.past().valueOf(),
         faker.lorem.sentence(),
         faker.internet.emoji(),
         faker.word.noun(),
@@ -68,7 +69,7 @@ export  function TestFirestorePage() {
         </>;
     }
 
-    getTransactions(auth.currentUser).then((t) => setTransactions(t));
+    getTransactionsFilterOrderBy(auth.currentUser, orderBy("dateTime", "desc")).then((t) => setTransactions(t));
     getCurrentBalance(auth.currentUser).then((b) => setBalance(b));
 
     return (
@@ -92,12 +93,13 @@ export  function TestFirestorePage() {
                 Transactions: <br/>
             </p>
             {
-                transactions.map((t) => <div key={t.forceGetDocName()}>
+                transactions.map((t) => <div className="mb-4" key={t.forceGetDocName()}>
+                    <p className="m-0">{new Date(t.dateTime).toISOString()}</p>
                     <textarea readOnly={true} style={{width: "100%", height: "320px"}} value={JSON.stringify(t, null, 4)}/>
                     <button onClick={() => {deleteTransaction(t.forceGetDocName()).then(() => setUpdate(update + 1))}}>Delete</button>
                     <button onClick={() => {
                         if (auth.currentUser != null) {
-                            t.dateTime = new Date(Date.now()).toISOString();
+                            t.dateTime = new Date(Date.now()).valueOf();
                             overwriteTransaction(auth.currentUser, t.forceGetDocName(), t).then(() => setUpdate(update + 1));
                         }
                     }}>Set Time To Now</button>

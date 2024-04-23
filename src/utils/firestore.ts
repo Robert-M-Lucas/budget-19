@@ -1,5 +1,6 @@
 import {collection,
-    deleteDoc, doc, DocumentSnapshot, getDocs, limit, query, QueryFieldFilterConstraint, setDoc, SnapshotOptions,
+    deleteDoc, doc, DocumentSnapshot, getDocs, limit, query,
+    QueryConstraint, setDoc, SnapshotOptions,
     startAfter, where, writeBatch} from "firebase/firestore";
 import {User} from "firebase/auth";
 import {db} from "./firebase.ts";
@@ -11,14 +12,14 @@ export class Transaction {
     public amount: number;
     public category: string;
     public currency: string;
-    public dateTime: string;
+    public dateTime: number;
     public description: string;
     public emoji: string;
     public name: string;
     public notes: string;
     public readonly uid: string;
 
-    constructor (address: string, amount: number, category: string, currency: string, dateTime: string, description: string, emoji: string, name: string, notes: string, uid: string) {
+    constructor (address: string, amount: number, category: string, currency: string, dateTime: number, description: string, emoji: string, name: string, notes: string, uid: string) {
         this.address = address;
         this.amount = amount;
         this.category = category;
@@ -123,7 +124,7 @@ export async function getTransactionsByDocName(user: User, docName: string): Pro
 }
 
 // Returns all transactions for the given `user` with the `filters` applied
-export async function getTransactionsFilterOrderBy(user: User, ...filters: QueryFieldFilterConstraint[]): Promise<Transaction[]> {
+export async function getTransactionsFilterOrderBy(user: User, ...filters:  QueryConstraint[]): Promise<Transaction[]> {
     const q = query(collection(db, "Transactions"), where("uid", "==", user.uid), ...filters);
     const ts: Transaction[] = [];
     await getDocs(q).then((qs) =>
