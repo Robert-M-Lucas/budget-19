@@ -1,5 +1,6 @@
 import useWindowDimensions from "../hooks/WindowDimensionsHook.tsx";
 import "../assets/css/Header.css"
+import {Link} from "react-router-dom";
 
 interface Props {
     user?: string
@@ -18,15 +19,17 @@ export function Header({user} : Props) {
                     </a>
 
                 {/*Pages*/}
-                <ul className="header-nav">
+        <ul className="header-nav">
 
-                    {/*Links to dashboard with tiles*/}
-                    <li><a href="/dash" className="header-item">Dashboard</a></li>
+            {/*Links to dashboard with tiles*/}
+            <li><Link to="/dash" className="header-item">Dashboard</Link></li>
 
-                    {/*Links to transactions page with table of expenses*/}
-                    <li><a href="/transactions" className="header-item">Transactions</a></li>
+            {/*Links to transactions page with table of expenses*/}
+            <li><Link to="/transactions" className="header-item">Transactions</Link></li>
 
-                    <li>{user}</li>
-                </ul>
+            <li><Link to="/test" className="header-item">Firestore Test</Link></li>
+
+            <li>{user}</li>
+        </ul>
     </header>;
 }

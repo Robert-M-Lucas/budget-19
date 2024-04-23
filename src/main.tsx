@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './utils/firebase.ts'
+import './utils/firestore.ts'
 import {RouterProvider} from "react-router-dom";
 import {router} from "./router.tsx";
 
