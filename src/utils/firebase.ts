@@ -4,7 +4,7 @@ import {connectAuthEmulator, getAuth } from "firebase/auth";
 import {connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
-const firebaseConfig = {
+export const firebaseConfig = {
     apiKey: "AIzaSyD70wqk2KYojBO_fAEiWEhDbiz4lo8vw2s",
     authDomain: "budget-19.firebaseapp.com",
     projectId: "budget-19",
@@ -21,6 +21,7 @@ export const auth = getAuth(app); // Initialize Firebase Authentication
 export const db = getFirestore(app);
 
 if (import.meta.env.DEV) {
+    console.log("Connecting to emulators");
     connectAuthEmulator(auth, "http://localhost:9099");
     connectFirestoreEmulator(db, "localhost", 8080);
 }

@@ -1,7 +1,7 @@
 import {collection,
-    deleteDoc, doc, DocumentSnapshot, getDocs, limit, query,
+    deleteDoc, doc, DocumentSnapshot, getDoc, getDocs, query,
     QueryConstraint, setDoc, SnapshotOptions,
-    startAfter, where, writeBatch} from "firebase/firestore";
+    where, writeBatch} from "firebase/firestore";
 import {User} from "firebase/auth";
 import {db} from "./firebase.ts";
 
@@ -77,8 +77,8 @@ export class Transaction {
     }
 }
 
-
-const BATCH_SIZE = 500;
+// ! This is set by Firebase - do not change!
+const MAX_BATCH_SIZE = 500;
 
 // Returns all transactions for the given `user` with the `docName` attribute set
 export async function getTransactions(user: User): Promise<Transaction[]> {
@@ -90,37 +90,23 @@ export async function getTransactions(user: User): Promise<Transaction[]> {
     return ts;
 }
 
-// Returns `pageSize` transactions for the given `user` with the `docName` attribute set
-export async function getTransactionsPage(user: User, pageSize: number, page: number): Promise<Transaction[]> {
-    const q = query(collection(db, "Transactions"), where("uid", "==", user.uid), startAfter(page * pageSize), limit(pageSize));
-    const ts: Transaction[] = [];
-    await getDocs(q).then((qs) =>
-        qs.forEach((q) => ts.push(Transaction.fromFirestore(q, {})))
-    );
-    return ts;
-}
-
 /*
 Returns the given document if it exists with the `docName` attribute set
-
-Note: Will not return document if it exists for a different user
  */
 export async function getTransactionsByDocName(user: User, docName: string): Promise<Transaction | undefined> {
-    const q = query(collection(db, "Transactions", docName), where("uid", "==", user.uid));
-    const ts: Transaction[] = [];
-    await getDocs(q).then((qs) =>
-        qs.forEach((q) => ts.push(Transaction.fromFirestore(q, {})))
+    const docRef = doc(collection(db, "Transactions"), docName);
+    // const q = query(collection(db, "Transactions", docName), where("uid", "==", user.uid));
+    let ts: Transaction | undefined = undefined;
+    await getDoc(docRef).then((ds) =>
+        {
+            ts = Transaction.fromFirestore(ds, {});
+            if (ts.uid !== user.uid) {
+                ts = undefined;
+            }
+        }
     );
 
-    if (ts.length === 0) {
-        return undefined;
-    }
-    else {
-        if (ts.length > 1) {
-            console.warn(`Multiple docs found with name ${docName}!`)
-        }
-        return ts[0]
-    }
+    return ts;
 }
 
 // Returns all transactions for the given `user` with the `filters` applied
@@ -172,9 +158,9 @@ export async function overwriteTransaction(user: User, docName: string, transact
 export async function writeNewTransactionsBatched(user: User, transactions: Transaction[]): Promise<void> {
     for (let i = 0; i < transactions.length; i+=500) {
         const batch = writeBatch(db);
-        const chunk = transactions.slice(i, i + BATCH_SIZE);
+        const chunk = transactions.slice(i, i + MAX_BATCH_SIZE);
         chunk.forEach((transaction) => {
-            if (user.uid == transaction.uid) {
+            if (user.uid != transaction.uid) {
                 throw Error(`Current user is '${user.uid}' however transaction is '${transaction.uid}'`);
             }
             const newTransactionRef = doc(collection(db, "Transactions"));
@@ -189,9 +175,9 @@ export async function writeNewTransactionsBatched(user: User, transactions: Tran
 export async function overwriteTransactionsBatched(user: User, docName: string[], transactions: Transaction[]): Promise<void> {
     for (let i = 0; i < transactions.length; i += 500) {
         const batch = writeBatch(db);
-        const chunk = transactions.slice(i, i + BATCH_SIZE);
+        const chunk = transactions.slice(i, i + MAX_BATCH_SIZE);
         chunk.forEach((transaction) => {
-            if (user.uid == transaction.uid) {
+            if (user.uid != transaction.uid) {
                 throw Error(`Current user is '${user.uid}' however transaction is '${transaction.uid}'`);
             }
             const newTransactionRef = doc(collection(db, "Transactions"), docName[i]);
