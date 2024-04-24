@@ -77,8 +77,8 @@ export class Transaction {
     }
 }
 
-
-const BATCH_SIZE = 500;
+// ! This is set by Firebase - do not change!
+const MAX_BATCH_SIZE = 500;
 
 // Returns all transactions for the given `user` with the `docName` attribute set
 export async function getTransactions(user: User): Promise<Transaction[]> {
@@ -168,7 +168,7 @@ export async function overwriteTransaction(user: User, docName: string, transact
 export async function writeNewTransactionsBatched(user: User, transactions: Transaction[]): Promise<void> {
     for (let i = 0; i < transactions.length; i+=500) {
         const batch = writeBatch(db);
-        const chunk = transactions.slice(i, i + BATCH_SIZE);
+        const chunk = transactions.slice(i, i + MAX_BATCH_SIZE);
         chunk.forEach((transaction) => {
             if (user.uid != transaction.uid) {
                 throw Error(`Current user is '${user.uid}' however transaction is '${transaction.uid}'`);
@@ -185,7 +185,7 @@ export async function writeNewTransactionsBatched(user: User, transactions: Tran
 export async function overwriteTransactionsBatched(user: User, docName: string[], transactions: Transaction[]): Promise<void> {
     for (let i = 0; i < transactions.length; i += 500) {
         const batch = writeBatch(db);
-        const chunk = transactions.slice(i, i + BATCH_SIZE);
+        const chunk = transactions.slice(i, i + MAX_BATCH_SIZE);
         chunk.forEach((transaction) => {
             if (user.uid == transaction.uid) {
                 throw Error(`Current user is '${user.uid}' however transaction is '${transaction.uid}'`);
