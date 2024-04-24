@@ -4,7 +4,7 @@ import {connectAuthEmulator, getAuth } from "firebase/auth";
 import {connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
-const firebaseConfig = {
+export const firebaseConfig = {
     apiKey: "AIzaSyD70wqk2KYojBO_fAEiWEhDbiz4lo8vw2s",
     authDomain: "budget-19.firebaseapp.com",
     projectId: "budget-19",

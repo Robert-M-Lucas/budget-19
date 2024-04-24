@@ -1,5 +1,5 @@
 import {collection,
-    deleteDoc, doc, DocumentSnapshot, getDocs, limit, query,
+    deleteDoc, doc, DocumentSnapshot, getDoc, getDocs, limit, query,
     QueryConstraint, setDoc, SnapshotOptions,
     startAfter, where, writeBatch} from "firebase/firestore";
 import {User} from "firebase/auth";
@@ -102,25 +102,21 @@ export async function getTransactionsPage(user: User, pageSize: number, page: nu
 
 /*
 Returns the given document if it exists with the `docName` attribute set
-
-Note: Will not return document if it exists for a different user
  */
 export async function getTransactionsByDocName(user: User, docName: string): Promise<Transaction | undefined> {
-    const q = query(collection(db, "Transactions", docName), where("uid", "==", user.uid));
-    const ts: Transaction[] = [];
-    await getDocs(q).then((qs) =>
-        qs.forEach((q) => ts.push(Transaction.fromFirestore(q, {})))
+    const docRef = doc(collection(db, "Transactions"), docName);
+    // const q = query(collection(db, "Transactions", docName), where("uid", "==", user.uid));
+    let ts: Transaction | undefined = undefined;
+    await getDoc(docRef).then((ds) =>
+        {
+            ts = Transaction.fromFirestore(ds, {});
+            if (ts.uid !== user.uid) {
+                ts = undefined;
+            }
+        }
     );
 
-    if (ts.length === 0) {
-        return undefined;
-    }
-    else {
-        if (ts.length > 1) {
-            console.warn(`Multiple docs found with name ${docName}!`)
-        }
-        return ts[0]
-    }
+    return ts;
 }
 
 // Returns all transactions for the given `user` with the `filters` applied
@@ -174,7 +170,7 @@ export async function writeNewTransactionsBatched(user: User, transactions: Tran
         const batch = writeBatch(db);
         const chunk = transactions.slice(i, i + BATCH_SIZE);
         chunk.forEach((transaction) => {
-            if (user.uid == transaction.uid) {
+            if (user.uid != transaction.uid) {
                 throw Error(`Current user is '${user.uid}' however transaction is '${transaction.uid}'`);
             }
             const newTransactionRef = doc(collection(db, "Transactions"));

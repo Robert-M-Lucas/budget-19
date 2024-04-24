@@ -1,41 +1,83 @@
-import {Transaction, writeNewTransaction} from "./firestore.ts";
+import {
+    getTransactionsByDocName,
+    getTransactionsFilterOrderBy,
+    Transaction,
+    writeNewTransaction,
+    writeNewTransactionsBatched
+} from "./firestore.ts";
 import {faker, fakerEN_GB} from "@faker-js/faker";
-import { initializeApp } from "firebase-admin/app";
-// import {auth} from "firebase-admin";
+import _ from "lodash";
+import { describe, expect, test } from "vitest";
+import {where} from "firebase/firestore";
 
-function fake_transaction(uid: string): Transaction {
+function fake_transaction(uid: string, name?: string): Transaction {
     return new Transaction(
         fakerEN_GB.location.streetAddress() + ", " + fakerEN_GB.location.city() + ", " + fakerEN_GB.location.zipCode(),
         parseFloat(faker.finance.amount({min: -1000, max: 1000})),
         faker.word.noun(),
         faker.finance.currency().code,
         faker.date.past().valueOf(),
-        faker.lorem.sentence(),
+        faker.string.numeric(100),
         faker.internet.emoji(),
-        faker.word.noun(),
+        name ? name : faker.word.noun(),
         faker.lorem.sentence(),
         uid
     );
 }
 
 describe("Firestore Tests", () => {
-    test("Write Test", async () => {
-        initializeApp();
-        const user = await auth().createUser({
-            email: "test@test.com",
-            password: "test_password",
-        });
+    test("Write/Read Test", async () => {
+        const user = { uid: "sample_uid" }
 
         const new_transaction = fake_transaction(user.uid);
 
-        expect(new_transaction.getDocName()).toBe(undefined);
+        expect(new_transaction.getDocName(), "New transaction has no docName").toBe(undefined);
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         const written_transaction = await writeNewTransaction(user, new_transaction);
 
-        it("Written Transactions have Doc Name set", () => {
-            expect(written_transaction.getDocName()).toBeDefined();
-        });
+        expect(written_transaction.getDocName(), "Written transaction has docName").toBeDefined();
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        const fetched_transaction = await getTransactionsByDocName(user, written_transaction.forceGetDocName());
+
+        expect(fetched_transaction, "Written transaction can be fetched").toBeDefined();
+
+        expect(_.isEqual(written_transaction, fetched_transaction), "Fetched transaction matches written transaction").toBeTruthy();
     });
+
+    test("Write/Read Batch Test", async () => {
+        const user = { uid: "sample_uid" }
+
+        const transaction_name = faker.string.alphanumeric(20);
+
+        const transactions = [];
+
+        for (let i = 0; i < 2123; i++) {
+            transactions.push(fake_transaction(user.uid, transaction_name));
+        }
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        await writeNewTransactionsBatched(user, transactions);
+
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        const fetched_transaction = await getTransactionsFilterOrderBy(user, where("name", "==", transaction_name));
+
+        fetched_transaction.forEach((t) => expect(t.getDocName()).toBeDefined())
+
+
+        const sorted_fetched_transactions = fetched_transaction
+            .sort((a, b) => parseInt(a.description) - parseInt(b.description));
+
+        const sorted_transactions = transactions
+            .sort((a, b) => parseInt(a.description) - parseInt(b.description));
+        sorted_transactions.forEach((t, i) => t.setDocName(sorted_fetched_transactions[i].forceGetDocName()))
+
+        expect(_.isEqual(sorted_transactions, sorted_fetched_transactions), "Written transactions fetched").toBeTruthy();
+    }, 10_000);
 });
