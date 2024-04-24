@@ -1,7 +1,7 @@
 import {collection,
-    deleteDoc, doc, DocumentSnapshot, getDoc, getDocs, limit, query,
+    deleteDoc, doc, DocumentSnapshot, getDoc, getDocs, query,
     QueryConstraint, setDoc, SnapshotOptions,
-    startAfter, where, writeBatch} from "firebase/firestore";
+    where, writeBatch} from "firebase/firestore";
 import {User} from "firebase/auth";
 import {db} from "./firebase.ts";
 
@@ -83,16 +83,6 @@ const MAX_BATCH_SIZE = 500;
 // Returns all transactions for the given `user` with the `docName` attribute set
 export async function getTransactions(user: User): Promise<Transaction[]> {
     const q = query(collection(db, "Transactions"), where("uid", "==", user.uid));
-    const ts: Transaction[] = [];
-    await getDocs(q).then((qs) =>
-        qs.forEach((q) => ts.push(Transaction.fromFirestore(q, {})))
-    );
-    return ts;
-}
-
-// Returns `pageSize` transactions for the given `user` with the `docName` attribute set
-export async function getTransactionsPage(user: User, pageSize: number, page: number): Promise<Transaction[]> {
-    const q = query(collection(db, "Transactions"), where("uid", "==", user.uid), startAfter(page * pageSize), limit(pageSize));
     const ts: Transaction[] = [];
     await getDocs(q).then((qs) =>
         qs.forEach((q) => ts.push(Transaction.fromFirestore(q, {})))
@@ -187,7 +177,7 @@ export async function overwriteTransactionsBatched(user: User, docName: string[]
         const batch = writeBatch(db);
         const chunk = transactions.slice(i, i + MAX_BATCH_SIZE);
         chunk.forEach((transaction) => {
-            if (user.uid == transaction.uid) {
+            if (user.uid != transaction.uid) {
                 throw Error(`Current user is '${user.uid}' however transaction is '${transaction.uid}'`);
             }
             const newTransactionRef = doc(collection(db, "Transactions"), docName[i]);

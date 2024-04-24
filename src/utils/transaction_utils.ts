@@ -1,6 +1,6 @@
 import {User} from "firebase/auth";
 import {getTransactions, getTransactionsFilterOrderBy, Transaction} from "./firestore.ts";
-import {where} from "firebase/firestore";
+import {limit, startAfter, where} from "firebase/firestore";
 
 export async function getCurrentBalance(user: User): Promise<number> {
     const transactions = await getTransactions(user);
@@ -24,4 +24,9 @@ const DAY_MILLIS = 8.64e+7;
 
 export async function getLastDayTransaction(user: User): Promise<Transaction[]> {
     return await getTransactionsFilterOrderBy(user, where("dateTime", ">", Date.now() - DAY_MILLIS));
+}
+
+// Returns `pageSize` transactions for the given `user` with the `docName` attribute set
+export async function getTransactionsPage(user: User, pageSize: number, page: number): Promise<Transaction[]> {
+    return await getTransactionsFilterOrderBy(user, startAfter(page * pageSize), limit(pageSize));
 }
