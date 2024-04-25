@@ -22,7 +22,7 @@ export function Header({user} : Props) {
         <ul className="header-nav">
 
             {/*Links to dashboard with tiles*/}
-            <li><Link to="/dash" className="header-item">Dashboard</Link></li>
+            <li><Link to="/graphs" className="header-item">Dashboard</Link></li>
 
             {/*Links to transactions page with table of expenses*/}
             <li><Link to="/transactions" className="header-item">Transactions</Link></li>
