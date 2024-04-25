@@ -20,8 +20,7 @@ export class UserPrefs {
         if (!data) {
             throw Error("No data returned for snapshot!");
         }
-        const u = new UserPrefs(data.goal);
-        return u;
+        return new UserPrefs(data.goal);
     }
 
     toSendObject(): object {
