@@ -7,7 +7,7 @@ import {
     overwriteTransaction,
     Transaction,
     writeNewTransaction
-} from "../../utils/firestore.ts";
+} from "../../utils/transaction.ts";
 import {faker, fakerEN_GB} from "@faker-js/faker";
 import {getCurrentBalance} from "../../utils/transaction_utils.ts";
 import {signInWithGoogle} from "../../utils/authentication.ts";
