@@ -49,7 +49,7 @@ const tileset_many: Array<{ text: string; rows: number; cols: number }> = [
     { text: "Tile 13", cols: 2, rows: 2 },
     { text: "Tile 14", cols: 2, rows: 2 },
     { text: "Tile 15", cols: 1, rows: 1 },
-    { text: "Tile 16", cols: 1, rows: 1 },
+    {text: "Tile 16", cols: 1, rows:1 },
     { text: "Tile 17", cols: 1, rows: 1 },
     { text: "Tile 18", cols: 1, rows: 1 },
     { text: "Tile 19", cols: 2, rows: 1 },
@@ -97,7 +97,7 @@ const tileset_weird: Array<{ text: string; rows: number; cols: number }> = [
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <IndexPage/>,
+        element: <IndexPage />,
         errorElement: <_404Page/>
     },
     {
@@ -113,8 +113,8 @@ export const router = createBrowserRouter([
 
     {
         path: "/user-test",
-        element: <IndexPage user={"testUserName"}/>,
-        errorElement: <_404Page/>
+        element: <IndexPage/>,
+        errorElement:<_404Page/>
     },
     {
         path: "/graphs",

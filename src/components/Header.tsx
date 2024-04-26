@@ -1,35 +1,52 @@
 import useWindowDimensions from "../hooks/WindowDimensionsHook.tsx";
 import "../assets/css/Header.css"
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {auth} from "../utils/firebase.ts";
+import {useState} from "react";
+import {User} from "firebase/auth";
 
-interface Props {
-    user?: string
-}
-
-export function Header({user} : Props) {
-    const {width, height} = useWindowDimensions();
-    const aspect_ratio = (width == 0 ? 1 : width) / (height == 0 ? 1 : height);
+export function Header() {
+    const { width, height } = useWindowDimensions();
+    const aspect_ratio = (width == 0? 1 : width) / (height == 0? 1 : height);
     const use_narrow = aspect_ratio < 0.7;
 
-    return <header className="header">
+    const [userName, setUserName] = useState<string | null>(null);
+    auth.onAuthStateChanged((new_user: User | null) => {
+        if (new_user === null) { setUserName(null); }
+        else { setUserName(new_user?.displayName) }
+    });
 
-                {/*App Name reloads home page*/}
-                    <a href="/" className="site-title">
-                        <h3>{use_narrow ? "B-19" : "Budget-19"}</h3>
-                    </a>
+    const navigate = useNavigate();
 
-                {/*Pages*/}
-        <ul className="header-nav">
+    const handleLogout = async () => {
+        await auth.signOut();
+        navigate("/", { replace: true });
+    };
 
-            {/*Links to dashboard with tiles*/}
-            <li><Link to="/dash" className="header-item">Dashboard</Link></li>
+    return (
+        <header className="header">
+            {/* App Name reloads home page */}
+            <a href="/" className="site-title">
+                <h3>{use_narrow? "B-19" : "Budget-19"}</h3>
+            </a>
 
-            {/*Links to transactions page with table of expenses*/}
-            <li><Link to="/transactions" className="header-item">Transactions</Link></li>
+            {/* Pages */}
+            <ul className="header-nav">
+                {/* Links to dashboard with tiles */}
+                <li><Link to="/dash" className={`header-item ${userName ? "header-item" : "text-muted bg-transparent"}`}>Dashboard</Link></li>
 
-            <li><Link to="/test" className="header-item">Firestore Test</Link></li>
+                {/* Links to transactions page with table of expenses */}
+                <li><Link to="/transactions" className={`header-item ${userName ? "header-item" : "text-muted bg-transparent"}`}>Transactions</Link></li>
 
-            <li>{user}</li>
-        </ul>
-    </header>;
+                <li><Link to="/test" className="header-item">Firestore Test</Link></li>
+
+                {userName && (
+                    <li>
+                        <span className="username">{userName}</span>
+                        <button type="button" className="logout-btn" onClick={handleLogout}>Logout</button>
+                    </li>
+                )}
+            </ul>
+        </header>
+    );
 }

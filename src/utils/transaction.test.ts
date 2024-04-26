@@ -6,7 +6,7 @@ import {
     Transaction,
     writeNewTransaction,
     writeNewTransactionsBatched
-} from "../utils/firestore.ts";
+} from "./transaction.ts";
 import {faker, fakerEN_GB} from "@faker-js/faker";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
@@ -27,7 +27,7 @@ function fakeTransaction(uid: string, name?: string): Transaction {
     );
 }
 
-describe("Firestore Tests", () => {
+describe("Firestore Transaction Tests", () => {
     test("Write/Read Test", async () => {
         const user = { uid: "sample_uid" }
 

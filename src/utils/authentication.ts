@@ -6,13 +6,16 @@ import { signInWithPopup } from "firebase/auth";
 const googleProvider = new GoogleAuthProvider();
 
 // Function to sign in with Google
-export const signInWithGoogle = async () => {
+export const signInWithGoogle = async (): Promise<any> => {
     try {
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
         console.log(user);
-        // Do something with the user object (e.g. save to state)
+        // Return the entire user object
+        return user;
     } catch (error) {
         console.error(error);
+        // Return null if there was an error
+        return null;
     }
 };
