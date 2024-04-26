@@ -40,7 +40,7 @@ function writeSampleData() {
 }
 
 
-export  function TestFirestorePage() {
+export function TestFirestorePage() {
     const [authResolved, setAuthResolved] = useState(false);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [balance, setBalance] = useState(0);

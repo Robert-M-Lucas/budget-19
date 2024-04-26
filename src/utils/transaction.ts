@@ -44,7 +44,6 @@ export class Transaction {
     getDocName(): string | undefined {
         return this.docName;
     }
-
     /*
     Returns the Firestore document name if set. Throws an error if not set!
 
