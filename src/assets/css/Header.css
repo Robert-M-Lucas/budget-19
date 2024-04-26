@@ -1,53 +1,53 @@
-*{
+* {
     box-sizing: border-box;
 }
 
-body{
+body {
     margin: 0;
 }
 
-.site-title{
+.site-title {
     font-size: 4rem;
-
 }
 
-.header-nav{
-    border-left: #E4F2E7;
+.header-nav {
+    border-left: #e4f2e7;
     border-left-style: solid;
     margin: 4rem;
+    width: calc(100% - 15rem); /* adjust the width of the header-nav element to make room for the logout button */
 }
-.header{
-    background-color: #2D3E40;
-    color: #E4F2E7;
+
+.header {
+    background-color: #2d3e40;
+    color: #e4f2e7;
     display: flex;
     gap: 2rem;
     padding-left: 1rem;
     padding-right: 1rem;
+    position: relative; /* add this */
 }
 
-
-.site-title:hover{
-    color: #E4F2E7;
+.site-title:hover {
+    color: #e4f2e7;
 }
 
-.header a{
-    color: #E4F2E7;
+.header a {
+    color: #e4f2e7;
     text-decoration: none;
-
     height: 100%;
     display: flex;
     align-items: center;
-    padding: .25rem;
+    padding: 0.25rem;
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
 }
 
-.header-item:hover{
-    color: #2D3E40;
-    background-color: #E4F2E7;
+.header-item:hover {
+    color: #2d3e40;
+    background-color: #e4f2e7;
 }
 
-.header ul{
+.header ul {
     padding-left: 1rem;
     margin: 0;
     list-style: none;
@@ -55,7 +55,43 @@ body{
     gap: 1rem;
 }
 
-.header li:active{
-    background-color: #E4F2E7;
-    color: #2D3E40;
+.header li:active {
+    background-color: #e4f2e7;
+    color: #2d3e40;
+}
+
+.logout-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    padding: 0.25rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    color: #e4f2e7;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    color: #2d3e40;
+    background-color: #e4f2e7;
+    height: 100%;
+}
+
+.username {
+    position: absolute;
+    right: 100px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    padding: 0.25rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    color: #e4f2e7;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
 }
