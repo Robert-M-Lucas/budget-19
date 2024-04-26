@@ -14,7 +14,9 @@ function IndexPage() {
 
     const handleSignIn = async () => {
         await signInWithGoogle();
-        navigate('/dash', { replace: true }); // Redirect to /dash after signing in
+        if (auth.currentUser !== null) {
+            navigate('/dash', { replace: true }); // Redirect to /dash after signing in
+        }
     };
 
     const [userName, setUserName] = useState<string | null>(null);
