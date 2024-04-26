@@ -6,7 +6,7 @@ import {
     Transaction,
     writeNewTransaction,
     writeNewTransactionsBatched
-} from "./firestore.ts";
+} from "../utils/firestore.ts";
 import {faker, fakerEN_GB} from "@faker-js/faker";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
