@@ -38,7 +38,7 @@ export default function Dashboard(props: Props) {
 
     return <>
         <div className="vh-100 d-flex flex-column">
-            <Header user="testUser"/>
+            <Header/>
 
             {/* TODO: MOVE TO CORRECT POSITION ON DASHBOARD */}
             <div> 
