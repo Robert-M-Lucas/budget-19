@@ -135,7 +135,7 @@ export default function GraphDashboard(){
 
     return (
         <div className="vh-100 d-flex flex-column">
-            <Header user="testUser"/>
+            <Header/>
             <Sidebar>
                 <div className="App ps-5 pe-5 mt-3">
                     <h1>Testing Graph Tiles</h1>

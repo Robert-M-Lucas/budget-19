@@ -113,7 +113,7 @@ export const router = createBrowserRouter([
 
     {
         path: "/user-test",
-        element: <IndexPage user={"testUserName"}/>,
+        element: <IndexPage/>,
         errorElement:<_404Page/>
     },
     {
