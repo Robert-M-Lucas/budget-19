@@ -35,15 +35,15 @@ export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dis
                 .filter((row) => row[3] === "Card payment" || row[3] === "Faster payment") // filter by type
                 .map((row) => new Transaction().fromRow(row));
 
-            const validTransactions = transactions.filter((transaction) => transaction.isValid);
-            if (validTransactions.length === 0) return setError("The uploaded CSV file has no valid transactions");
+            const transactionDocuments = transactions
+                .filter((transaction) => transaction.isValid)
+                .map((transaction) => transaction.toDocument(auth.currentUser!.uid));
+
+            if (transactionDocuments.length === 0) return setError("The uploaded CSV file has no valid transactions");
                             
-            await writeNewTransactionsBatched(
-                auth.currentUser, 
-                validTransactions.map((transaction) => transaction.toDocument(auth.currentUser!.uid))
-            )
+            await writeNewTransactionsBatched(auth.currentUser, transactionDocuments);
             
-            setSuccessMsg(`${validTransactions.length} valid transactions have been imported out of ${transactions.length} total transactions`);
+            setSuccessMsg(`${transactionDocuments.length} valid transactions have been imported out of ${transactions.length} total transactions`);
             setTimeout(() => setSuccessMsg(null), 10000);
 
             fileElement.value = "";

@@ -43,7 +43,7 @@ export function InputTransaction({ show, setShow}: { show: boolean, setShow: Rea
             return;
         }
 
-        await writeNewTransaction(auth.currentUser, transaction.toDocument(auth.currentUser.uid))
+        await writeNewTransaction(auth.currentUser, transaction.toDocument(auth.currentUser.uid));
 
         setSuccessMsg("Transaction has been successfully added");
         setTimeout(() => setSuccessMsg(null), 10000);
