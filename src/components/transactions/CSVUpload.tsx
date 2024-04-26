@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Transaction } from "./Transaction";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
+import { writeNewTransactionsBatched } from "../../utils/transaction.ts";
+import { auth } from "../../utils/firebase";
 
 export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [error, setError] = useState<string | null>();
@@ -8,37 +10,36 @@ export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dis
 
     const reader = new FileReader();
 
-    function handleUpload() {
+    async function handleUpload() {
         setError(null);
         setSuccessMsg(null);
-        
+                
         const fileElement = document.getElementById("file") as HTMLInputElement | null;
         if (!fileElement || fileElement.files?.length === 0) return setError("You haven't uploaded a CSV file");
 
         const file = fileElement.files![0]; 
         if (!file) return setError("You haven't uploaded a CSV file");
     
-        reader.onload = (event) => {
+        reader.onload = async (event) => {
+            if (!auth.currentUser) return setError("You are not signed in");
+            
             const csvContent = event.target?.result;
             if (!csvContent || csvContent instanceof ArrayBuffer) return setError("Unable to read uploaded CSV file");
 
-            const rows = csvContent
+            const transactionDocuments = csvContent
                 .split("\n")
                 .slice(1)
-                .map((row) => row.split(","));
-
-            const transactions = rows
+                .map((row) => row.split(","))
                 .filter((row) => row[3] === "Card payment" || row[3] === "Faster payment") // filter by type
-                .map((row) => new Transaction().fromRow(row));
+                .map((row) => new Transaction().fromRow(row))
+                .filter((transaction) => transaction.isValid)
+                .map((transaction) => transaction.toDocument(auth.currentUser!.uid));
 
-            const validTransactions = transactions.filter((transaction) => transaction.isValid);
-            if (validTransactions.length === 0) return setError("The uploaded CSV file has no valid transactions");
-                
-            // -------------------------------------------------------------------------------------
-            // TODO: STORE "validTransactions" IN THE DATABASE
-            // -------------------------------------------------------------------------------------
+            if (transactionDocuments.length === 0) return setError("The uploaded CSV file has no valid transactions");
+                            
+            await writeNewTransactionsBatched(auth.currentUser, transactionDocuments);
             
-            setSuccessMsg(`${validTransactions.length} valid transactions have been imported out of ${transactions.length} total transactions`);
+            setSuccessMsg(`${transactionDocuments.length} transactions have been imported`);
             setTimeout(() => setSuccessMsg(null), 10000);
 
             fileElement.value = "";
