@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Transaction } from "./Transaction";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
+import { writeNewTransactionsBatched } from "../../utils/firestore";
+import { auth } from "../../utils/firebase";
 
 export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [error, setError] = useState<string | null>();
@@ -8,17 +10,19 @@ export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dis
 
     const reader = new FileReader();
 
-    function handleUpload() {
+    async function handleUpload() {
         setError(null);
         setSuccessMsg(null);
-        
+                
         const fileElement = document.getElementById("file") as HTMLInputElement | null;
         if (!fileElement || fileElement.files?.length === 0) return setError("You haven't uploaded a CSV file");
 
         const file = fileElement.files![0]; 
         if (!file) return setError("You haven't uploaded a CSV file");
     
-        reader.onload = (event) => {
+        reader.onload = async (event) => {
+            if (!auth.currentUser) return setError("You are not signed in");
+            
             const csvContent = event.target?.result;
             if (!csvContent || csvContent instanceof ArrayBuffer) return setError("Unable to read uploaded CSV file");
 
@@ -33,10 +37,11 @@ export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dis
 
             const validTransactions = transactions.filter((transaction) => transaction.isValid);
             if (validTransactions.length === 0) return setError("The uploaded CSV file has no valid transactions");
-                
-            // -------------------------------------------------------------------------------------
-            // TODO: STORE "validTransactions" IN THE DATABASE
-            // -------------------------------------------------------------------------------------
+                            
+            await writeNewTransactionsBatched(
+                auth.currentUser, 
+                validTransactions.map((transaction) => transaction.toDocument(auth.currentUser!.uid))
+            )
             
             setSuccessMsg(`${validTransactions.length} valid transactions have been imported out of ${transactions.length} total transactions`);
             setTimeout(() => setSuccessMsg(null), 10000);

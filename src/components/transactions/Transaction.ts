@@ -1,3 +1,5 @@
+import { Transaction as TransactionDocument } from "../../utils/firestore";
+
 export const emojis: { [index: string]: string } = {
     "Income": "💸",
     "Transfers": "🏦",
@@ -146,6 +148,21 @@ export class Transaction {
         this.description = this.isNotEmpty(description) ? description : null;
 
         return this;
+    }
+
+    toDocument(uid: string): TransactionDocument {
+        return new TransactionDocument(
+            this.address as string,
+            this.amount as number,
+            this.category as string,
+            this.currency as string,
+            new Date((this.date as string) + (this.time as string)).getTime(),
+            this.description as string,
+            this.emoji as string,
+            this.name as string,
+            this.notes as string,
+            uid
+        );
     }
 
     isNotEmpty(val?: string): val is string {
