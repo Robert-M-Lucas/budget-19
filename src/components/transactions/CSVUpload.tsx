@@ -26,16 +26,12 @@ export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dis
             const csvContent = event.target?.result;
             if (!csvContent || csvContent instanceof ArrayBuffer) return setError("Unable to read uploaded CSV file");
 
-            const rows = csvContent
+            const transactionDocuments = csvContent
                 .split("\n")
                 .slice(1)
-                .map((row) => row.split(","));
-
-            const transactions = rows
+                .map((row) => row.split(","))
                 .filter((row) => row[3] === "Card payment" || row[3] === "Faster payment") // filter by type
-                .map((row) => new Transaction().fromRow(row));
-
-            const transactionDocuments = transactions
+                .map((row) => new Transaction().fromRow(row))
                 .filter((transaction) => transaction.isValid)
                 .map((transaction) => transaction.toDocument(auth.currentUser!.uid));
 
@@ -43,7 +39,7 @@ export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dis
                             
             await writeNewTransactionsBatched(auth.currentUser, transactionDocuments);
             
-            setSuccessMsg(`${transactionDocuments.length} valid transactions have been imported out of ${transactions.length} total transactions`);
+            setSuccessMsg(`${transactionDocuments.length} transactions have been imported`);
             setTimeout(() => setSuccessMsg(null), 10000);
 
             fileElement.value = "";
