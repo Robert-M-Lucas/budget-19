@@ -1,6 +1,6 @@
 import useWindowDimensions from "../hooks/WindowDimensionsHook.tsx";
 import "../assets/css/Header.css"
-import {Link, useNavigate} from "react-router-dom";
+import {Link, useNavigate, useLocation} from "react-router-dom";
 import {auth} from "../utils/firebase.ts";
 
 interface Props {
@@ -16,11 +16,14 @@ export function Header({ user }: Props) {
     const currentUser = auth.currentUser?.displayName?? "";
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogout = () => {
         auth.signOut();
         navigate("/", { replace: true });
     };
+
+    const isIndexPage = location.pathname === "/";
 
     return (
         <header className="header">
@@ -32,10 +35,10 @@ export function Header({ user }: Props) {
             {/* Pages */}
             <ul className="header-nav">
                 {/* Links to dashboard with tiles */}
-                <li><Link to="/dash" className="header-item">Dashboard</Link></li>
+                <li><Link to="/dash" className={`header-item ${isIndexPage ? "text-muted bg-transparent" : "header-item"}`}>Dashboard</Link></li>
 
                 {/* Links to transactions page with table of expenses */}
-                <li><Link to="/transactions" className="header-item">Transactions</Link></li>
+                <li><Link to="/transactions" className={`header-item ${isIndexPage ? "text-muted bg-transparent" : "header-item"}`}>Transactions</Link></li>
 
                 <li><Link to="/test" className="header-item">Firestore Test</Link></li>
 

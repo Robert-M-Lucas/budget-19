@@ -95,3 +95,12 @@ body {
     border: none;
     cursor: pointer;
 }
+
+.text-muted {
+    color: #6c757d;
+    pointer-events: none;
+}
+
+.bg-transparent {
+    background-color: transparent;
+}
