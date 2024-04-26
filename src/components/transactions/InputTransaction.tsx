@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Transaction, emojis, formatDate, formatTime } from "./Transaction";
 import { Button, Modal, Form, Alert } from "react-bootstrap";
 import { auth } from "../../utils/firebase";
-import { writeNewTransaction } from "../../utils/firestore";
+import { writeNewTransaction } from "../../utils/firestore.ts";
 
 export function InputTransaction({ show, setShow}: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [name, setName] = useState<string>("");

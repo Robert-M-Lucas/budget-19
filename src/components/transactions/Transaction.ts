@@ -1,4 +1,4 @@
-import { Transaction as TransactionDocument } from "../../utils/firestore";
+import { Transaction as TransactionDocument } from "../../utils/firestore.ts";
 
 export const emojis: { [index: string]: string } = {
     "Income": "💸",
