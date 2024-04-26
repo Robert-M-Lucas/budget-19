@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Transaction } from "./Transaction";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
-import { writeNewTransactionsBatched } from "../../utils/firestore.ts";
+import { writeNewTransactionsBatched } from "../../utils/transaction.ts";
 import { auth } from "../../utils/firebase";
 
 export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
