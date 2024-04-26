@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Transaction, emojis, formatDate, formatTime } from "./Transaction";
 import { Button, Modal, Form, Alert } from "react-bootstrap";
+import { auth } from "../../utils/firebase";
+import { writeNewTransaction } from "../../utils/transaction.ts";
 
 export function InputTransaction({ show, setShow}: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [name, setName] = useState<string>("");
@@ -15,10 +17,12 @@ export function InputTransaction({ show, setShow}: { show: boolean, setShow: Rea
     const [error, setError] = useState<string | null>("");
     const [successMsg, setSuccessMsg] = useState<string | null>("");
 
-    function addTransaction() {
+    async function addTransaction() {
         setError(null);
         setSuccessMsg(null);
 
+        if (!auth.currentUser) return setError("You are not signed in");
+        
         const date = new Date();
 
         const transaction = new Transaction()
@@ -39,9 +43,7 @@ export function InputTransaction({ show, setShow}: { show: boolean, setShow: Rea
             return;
         }
 
-        // -------------------------------------------------------------------------------------
-        // TODO: STORE "transaction" IN THE DATABASE
-        // -------------------------------------------------------------------------------------
+        await writeNewTransaction(auth.currentUser, transaction.toDocument(auth.currentUser.uid));
 
         setSuccessMsg("Transaction has been successfully added");
         setTimeout(() => setSuccessMsg(null), 10000);
