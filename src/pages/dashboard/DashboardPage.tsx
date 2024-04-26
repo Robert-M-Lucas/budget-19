@@ -1,13 +1,14 @@
 import "./styles.css";
 import "react-tiles-dnd/esm/index.css";
-import { TilesContainer, RenderTileFunction } from "react-tiles-dnd";
+import {TilesContainer, RenderTileFunction} from "react-tiles-dnd";
 import useWindowDimensions from "../../hooks/WindowDimensionsHook.tsx";
-import {Header} from "../../components/Header.tsx";
 import React, {ReactNode, useEffect, useState} from "react";
-import { getTransactionsFilterOrderBy, Transaction } from "../../utils/transaction.ts"
+import {Header} from "../../components/Header.tsx";
+import {getTransactionsFilterOrderBy, Transaction} from "../../utils/transaction.ts"
+import {getCurrentBalance} from "../../utils/transaction_utils.ts";
+import {readTransactions} from "./GraphUtils.ts";
 import {auth} from "../../utils/firebase.ts";
 import {orderBy} from "firebase/firestore";
-import {getCurrentBalance} from "../../utils/transaction_utils.ts";
 import { User } from "firebase/auth";
 import {FullscreenCenter} from "../../components/FullscreenCenter.tsx";
 import {Button} from "react-bootstrap";
@@ -55,48 +56,10 @@ export default function Dashboard() {
     const [showCSVModal, setShowCSVModal] = useState(false);
     const [showTransactionModal, setShowTransactionModal] = useState(false);
 
-    const tileSize = (tile: typeof transactionTiles[0]) => ({
-        colSpan: tile.cols,
-        rowSpan: tile.rows
-    });
-    const cumulateTransactions = (points: transactionPoint[]): transactionPoint[] => {
-        let total = 0;
-        return points.map(value => {
-            total += value.amount;
-            return {date: value.date, amount: total};
-        })
-    }
-    const getDateString = (timestamp: number): string => {
-        const date = new Date(timestamp)
-        const day = date.getDate().toString().padStart(2, '0'); // Ensures two digits
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, add 1
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
-    const splitTransactions = (data: transactionPoint[]): void => {
-        const moneyIn: transactionPoint[] = []
-        const moneyOut: transactionPoint[] = []
-        data.forEach(t => {
-            if (t.amount > 0) {
-                moneyIn.push(t)
-            } else {
-                moneyOut.push(t)
-            }
-        })
-        setPoints([cumulateTransactions(data), cumulateTransactions(moneyIn), cumulateTransactions(moneyOut)])
-        console.log(transactionPoints)
-    }
-    const readTransactions = (data: Transaction[]): void => {
-        const result: transactionPoint[] = []
-        data.forEach(t => {
-            result.push({amount: t.amount, date: getDateString(t.dateTime)})
-        })
-        splitTransactions(result)
-    }
     const fetchTransactions = async (user: User) => {
         try {
-            const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "desc"))
-            readTransactions(transactions)
+            const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "asc"))
+            await readTransactions(transactions).then((t) => setPoints(t))
             setFetchResolved(true);
         } catch (error) {}
     }
@@ -112,7 +75,7 @@ export default function Dashboard() {
         }
     },[auth.currentUser])
 
-
+    // Forces user to wait till everything has loaded
     if (!authResolved) {
         auth.authStateReady().then(() => setAuthResolved(true));
         return <>
@@ -134,13 +97,17 @@ export default function Dashboard() {
         </>;
     }
 
+    // Tiles
+    const tileSize = (tile: typeof transactionTiles[0]) => ({
+        colSpan: tile.cols,
+        rowSpan: tile.rows
+    });
     const transactionTiles = [
         {d: TileElement.newGraph(transactionPoints[0]), cols:5, rows:2},
         {d: TileElement.newGraph(transactionPoints[1]), cols:5, rows:2},
         {d: TileElement.newGraph(transactionPoints[2]), cols:5, rows:2},
         {d: TileElement.newTSX(test), cols:1, rows:1}
     ];
-
     const renderFirebase: RenderTileFunction<typeof transactionTiles[0]> = ({ data, isDragging }) => (
         <div style={{padding: ".75rem", width: "100%"}}>
             <div className={`tile card ${isDragging ? "dragging" : ""}`}

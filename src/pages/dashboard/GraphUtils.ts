@@ -2,7 +2,7 @@ import {Transaction} from "../../utils/transaction.ts";
 
 type transactionPoint = { date: string; amount: number }
 
-const cumulateTransactions = (points: transactionPoint[]): transactionPoint[] => {
+export const cumulateTransactions = (points: transactionPoint[]): transactionPoint[] => {
     let total = 0;
     return points.map(value => {
         total += value.amount;
@@ -16,7 +16,14 @@ const getDateString = (timestamp: number): string => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
 }
-export const splitTransactions = (data: transactionPoint[]): void => {
+export const readTransactions = async (data: Transaction[]): Promise<transactionPoint[][]> => {
+    const result: transactionPoint[] = []
+    data.forEach(t => {
+        result.push({amount: t.amount, date: getDateString(t.dateTime)})
+    })
+    return splitTransactions(result)
+}
+export const splitTransactions = (data: transactionPoint[]): transactionPoint[][] => {
     const moneyIn: transactionPoint[] = []
     const moneyOut: transactionPoint[] = []
     data.forEach(t => {
@@ -26,11 +33,5 @@ export const splitTransactions = (data: transactionPoint[]): void => {
             moneyOut.push(t)
         }
     })
-}
-export const readTransactions = (data: Transaction[]): void => {
-    const result: transactionPoint[] = []
-    data.forEach(t => {
-        result.push({amount: t.amount, date: getDateString(t.dateTime)})
-    })
-    splitTransactions(result)
+    return ([cumulateTransactions(data), cumulateTransactions(moneyIn), cumulateTransactions(moneyOut)])
 }
