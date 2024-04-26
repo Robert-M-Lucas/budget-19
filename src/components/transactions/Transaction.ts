@@ -63,7 +63,7 @@ export class Transaction {
             this.isValid = false;
             this.invalidField = "date";
         } else {
-            this.date = date;
+            this.date = `${year}-${month}-${day}`;
         }
         
         return this;
@@ -156,7 +156,7 @@ export class Transaction {
             this.amount as number,
             this.category as string,
             this.currency as string,
-            new Date((this.date as string) + (this.time as string)).getTime(),
+            new Date((this.date as string) + " " + (this.time as string)).getTime(),
             this.description as string,
             this.emoji as string,
             this.name as string,

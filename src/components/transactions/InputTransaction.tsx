@@ -4,7 +4,7 @@ import { Button, Modal, Form, Alert } from "react-bootstrap";
 import { auth } from "../../utils/firebase";
 import { writeNewTransaction } from "../../utils/transaction.ts";
 
-export function InputTransaction({ show, setShow}: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
+export function InputTransaction({ show, setShow }: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
     const [name, setName] = useState<string>("");
     const [category, setCategory] = useState<string>("Income");
 
@@ -49,7 +49,6 @@ export function InputTransaction({ show, setShow}: { show: boolean, setShow: Rea
         setTimeout(() => setSuccessMsg(null), 10000);
 
         setName("");
-        setCategory("");
         setAmount("");
         setDescription("");
         setNotes("");

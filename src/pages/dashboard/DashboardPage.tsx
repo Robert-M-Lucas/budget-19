@@ -29,7 +29,7 @@ const tileSize = (tile: { text: string; rows: number; cols: number }) => ({
     rowSpan: tile.rows
 });
 
-export default function Dashboard(props: Props) {
+export default function Dashboard(props: Props) {  
     const {width} = useWindowDimensions();
     const columns = Math.max(Math.floor(width / 200), 1);
     
@@ -38,7 +38,7 @@ export default function Dashboard(props: Props) {
 
     return <>
         <div className="vh-100 d-flex flex-column">
-            <Header/>
+            <Header/> 
 
             {/* TODO: MOVE TO CORRECT POSITION ON DASHBOARD */}
             <div> 
@@ -58,9 +58,9 @@ export default function Dashboard(props: Props) {
                         tileSize={tileSize}
                         ratio={1}
                         columns={columns}
-                    ></TilesContainer>
+                    />
                 </div>
             </Sidebar>
-        </div>
+        </div> 
     </>
 }
