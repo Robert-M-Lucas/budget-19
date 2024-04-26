@@ -1,5 +1,5 @@
 import {User} from "firebase/auth";
-import {getTransactions, getTransactionsFilterOrderBy, Transaction} from "./firestore.ts";
+import {getTransactions, getTransactionsFilterOrderBy, Transaction} from "./transaction.ts";
 import {limit, startAfter, where} from "firebase/firestore";
 
 export async function getCurrentBalance(user: User): Promise<number> {
