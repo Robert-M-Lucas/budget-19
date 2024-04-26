@@ -97,7 +97,7 @@ const tileset_weird: Array<{ text: string; rows: number; cols: number }> = [
 export const router = createBrowserRouter([
     {
         path: "/",
-        element: <IndexPage />, // Remove the user={undefined} prop
+        element: <IndexPage />,
         errorElement: <_404Page/>
     },
     {

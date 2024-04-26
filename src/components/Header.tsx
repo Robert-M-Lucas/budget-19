@@ -1,6 +1,6 @@
 import useWindowDimensions from "../hooks/WindowDimensionsHook.tsx";
 import "../assets/css/Header.css"
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {auth} from "../utils/firebase.ts";
 
 interface Props {
@@ -14,6 +14,13 @@ export function Header({ user }: Props) {
     const use_narrow = aspect_ratio < 0.7;
 
     const currentUser = auth.currentUser?.displayName?? "";
+
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        auth.signOut();
+        navigate("/", { replace: true });
+    };
 
     return (
         <header className="header">
@@ -35,7 +42,7 @@ export function Header({ user }: Props) {
                 {user && (
                     <li>
                         <span className="username">{currentUser}</span>
-                        <button type="button" className="logout-btn">Logout</button>
+                        <button type="button" className="logout-btn" onClick={handleLogout}>Logout</button>
                     </li>
                 )}
             </ul>
