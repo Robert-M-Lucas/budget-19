@@ -44,13 +44,6 @@ export class Transaction {
     getDocName(): string | undefined {
         return this.docName;
     }
-
-    getAmount(): number {
-        return this.amount
-    }
-    getDateTime(): number {
-        return this.dateTime
-    }
     /*
     Returns the Firestore document name if set. Throws an error if not set!
 
