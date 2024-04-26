@@ -6,7 +6,7 @@ import {
     Transaction,
     writeNewTransaction,
     writeNewTransactionsBatched
-} from "../utils/firestore.ts";
+} from "./firestore.ts";
 import {faker, fakerEN_GB} from "@faker-js/faker";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
@@ -36,13 +36,13 @@ describe("Firestore Tests", () => {
         expect(new_transaction.getDocName(), "New transaction has no docName").toBe(undefined);
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+        // @ts-ignore
         const written_transaction = await writeNewTransaction(user, new_transaction);
 
         expect(written_transaction.getDocName(), "Written transaction has docName").toBeDefined();
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
+        // @ts-ignore
         const fetched_transaction = await getTransactionsByDocName(user, written_transaction.forceGetDocName());
 
         expect(fetched_transaction, "Written transaction can be fetched").toBeDefined();
