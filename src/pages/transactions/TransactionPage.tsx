@@ -105,7 +105,7 @@ export function TransactionPage() {
                     <th>Emoji</th>
                     <th>Date</th>
                     <th>Amount</th>
-                    <th>Notes</th>
+                    <th>Description</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -158,16 +158,20 @@ function TransactionItem({data}: { data: Transaction }) {
             <td>{data.emoji}</td>
             <td>{strftime("%d/%m/%y - %H:%M", new Date(data.dateTime))}</td>
             {data.amount > 0 ?
-                <td className="d-flex justify-content-between" style={{color: "green"}}>
-                    <span>£</span>
-                    <span>{data.amount.toFixed(2)}</span>
+                <td>
+                    <div className="d-flex justify-content-between align-items-center" style={{color: "green"}}>
+                        <span>£</span>
+                        <span>{data.amount.toFixed(2)}</span>
+                    </div>
                 </td> :
-                <td className="d-flex justify-content-between" style={{color: "red"}}>
-                    <span>£</span>
-                    <span>{data.amount.toFixed(2)}</span>
+                <td>
+                    <div className="d-flex justify-content-between align-items-center" style={{color: "red"}}>
+                        <span>£</span>
+                        <span>{data.amount.toFixed(2)}</span>
+                    </div>
                 </td>
             }
-            <td>{data.notes}</td>
+            <td className="text-wrap">{data.description}</td>
         </tr>
     );
 }
