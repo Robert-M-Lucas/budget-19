@@ -1,39 +1,100 @@
-import { useEffect, useState } from "react";
+import {useState} from "react";
+import {auth} from "../../utils/firebase.ts";
+import {getTransactionsFilterOrderBy, Transaction} from "../../utils/transaction.ts";
+import {FullscreenCenter} from "../../components/FullscreenCenter.tsx";
+import {User} from "firebase/auth";
+import {Header} from "../../components/Header.tsx";
+import {signInWithGoogle} from "../../utils/authentication.ts";
+import {limit, orderBy, startAfter} from "firebase/firestore";
 
 // CSS
 import "./transactionsTable.scss";
-import {getTransactionsPage} from "../../utils/transaction_utils.ts";
-import {auth} from "../../utils/firebase.ts";
-import {getTransactions, Transaction} from "../../utils/transaction.ts";
 
 export function TransactionPage() {
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [transactions, setTransactions] = useState<Transaction[] | null>(null);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [authResolved, setAuthResolved] = useState(false);
+    const [update, setUpdate] = useState(0);
+    const [pageStarts, setPageStarts] = useState([Infinity]);
     const itemsPerPage = 10;
 
-    console.log("A");
 
-    // adjusted dylan.s code to use getTransactionPage instead of getTransactions
-    useEffect(() => {
-        if (!auth.currentUser) return;
-
-        getTransactionsPage(auth.currentUser, itemsPerPage, currentPage)
-            .then((pageTransactions) => {
-                console.log("Fetched transactions:");
-                console.log(pageTransactions);
-                setTransactions(pageTransactions);
-            });
-    }, [currentPage]);
-
-    console.log("B");
-
-    if (transactions.length === 0) {
-        return <div>Fetching transactions</div>;
+    if (!authResolved) {
+        auth.authStateReady().then(() => setAuthResolved(true));
+        return <>
+            <FullscreenCenter>
+                <div className="text-center">
+                    <h1>Waiting for Auth</h1>
+                </div>
+            </FullscreenCenter>
+        </>;
     }
 
-    console.log("C");
+    if (auth.currentUser === null) {
+        auth.onAuthStateChanged((new_user: User | null) => {
+            if (new_user !== null) {
+                setUpdate(update + 1);
+            }
+        });
+        return <>
+            <Header/>
+            <FullscreenCenter>
+                <div className="text-center">
+                    <h1>Not Logged In</h1>
+                    <button type="button" className="login-with-google-btn" onClick={signInWithGoogle}>
+                        Sign in with Google
+                    </button>
+                </div>
+            </FullscreenCenter>
+        </>;
+    }
 
-    return (
+    if (!transactions) {
+        getTransactionsFilterOrderBy(auth.currentUser, orderBy("dateTime", "desc"), limit(itemsPerPage), startAfter(pageStarts[pageStarts.length - 1]))
+            .then((pageTransactions) => {
+                setTransactions(pageTransactions);
+            });
+
+        return <>
+            <Header/>
+            <table>
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Emoji</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Notes</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Fetching...</td>
+                    <td>Fetching...</td>
+                    <td>Fetching...</td>
+                    <td>Fetching...</td>
+                    <td>Fetching...</td>
+                    <td>Fetching...</td>
+                </tr>
+                </tbody>
+            </table>
+        </>;
+    }
+
+
+    // adjusted dylan.s code to use getTransactionPage instead of getTransactions
+    // useEffect(() => {
+    //     getTransactionsPage(auth.currentUser, itemsPerPage, currentPage)
+    //         .then((pageTransactions) => {
+    //             console.log("Fetched transactions:");
+    //             console.log(pageTransactions);
+    //             setTransactions(pageTransactions);
+    //         });
+    // }, [currentPage]);
+
+    return <>
+        <Header/>
         <div>
             <table>
                 <thead>
@@ -53,10 +114,18 @@ export function TransactionPage() {
                 ))}
                 </tbody>
             </table>
-            <div className="pagination">
+            { transactions.length == 0 &&
+                <h1 className="vw-100 text-center text-muted">[No More Data]</h1>
+            }
+            <div className="pagination p-2">
                 {/* conditional previous page button, only displayed if page number > 1 */}
-                {currentPage > 1 && (
-                    <button onClick={() => setCurrentPage(currentPage - 1)}>
+                {currentPage > 0 && (
+                    <button onClick={() => {
+                        setCurrentPage(currentPage - 1);
+                        pageStarts.pop()
+                        setPageStarts(pageStarts);
+                        setTransactions(null);
+                    }}>
                         <span>&lt;</span> Previous
                     </button>
                 )}
@@ -64,12 +133,20 @@ export function TransactionPage() {
                 <div className="spacer"></div>
                 <span className="page-counter">Page {currentPage}</span>
                 <div className="spacer"></div>
-                <button onClick={() => setCurrentPage(currentPage + 1)}>
+                {transactions.length === itemsPerPage &&
+                <button onClick={() => {
+                    setCurrentPage(currentPage + 1);
+                    pageStarts.push(transactions[transactions.length - 1].dateTime);
+                    setPageStarts(pageStarts);
+                    setTransactions(null);
+                }}>
                     Next <span>&gt;</span>
                 </button>
+                }
             </div>
+
         </div>
-    );
+    </>;
 }
 
 function TransactionItem({data}: { data: Transaction }) {
