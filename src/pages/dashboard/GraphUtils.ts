@@ -1,7 +1,7 @@
 import {Transaction} from "../../utils/transaction.ts";
 import strftime from "strftime";
 
-export type transactionPoint = { date: string; amount: number }
+type transactionPoint = { date: string; amount: number; goal: number }
 export type finalGraphData = {raw: transactionPoint[], in: transactionPoint[], out: transactionPoint[]};
 
 function cumulateTransactions(points: transactionPoint[]): transactionPoint[] {
@@ -33,7 +33,7 @@ function splitTransactions (data: transactionPoint[]): finalGraphData {
 export function readTransactions(data: Transaction[]): finalGraphData {
     return splitTransactions(
         data.map((t) => {
-            return {date: getDateString(t.dateTime), amount: t.amount}
+            return {date: getDateString(t.dateTime), amount: t.amount, goal: 800};
         })
     );
 }

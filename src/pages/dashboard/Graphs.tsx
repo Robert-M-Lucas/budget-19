@@ -1,6 +1,3 @@
-import {Line, LineChart, ResponsiveContainer, XAxis, YAxis} from "recharts";
-
-type transactionPoint = { date: string; amount: number; goal: number }
 import {Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 import {transactionPoint} from "./GraphUtils.ts";
 

@@ -50,7 +50,7 @@ export default function Dashboard() {
             <Header/>
             <FullscreenCenter>
                 <div className="text-center">
-                    <h1>Waiting for Auth</h1>
+                    <h1>Waiting for Authentication</h1>
                 </div>
             </FullscreenCenter>
         </>;
@@ -78,7 +78,7 @@ export default function Dashboard() {
             <Header/>
             <FullscreenCenter>
                 <div className="text-center">
-                    <h1>Fetching</h1>
+                    <h1>Fetching {transactionPoints ? "" : "transactions"}{!transactionPoints && !userPrefs ? "," : ""} {userPrefs ? "" : "goals"}</h1>
                 </div>
             </FullscreenCenter>
         </>;
