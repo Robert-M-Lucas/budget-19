@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@types/papaparse": "^5.3.14",
+    "@types/strftime": "^0.9.8",
     "bootstrap": "^5.3.3",
     "firebase": "^10.11.0",
     "lodash": "^4.17.21",
@@ -23,7 +24,8 @@
     "react-router-dom": "^6.23.0",
     "react-tiles-dnd": "^0.1.2",
     "recharts": "^2.12.5",
-    "sass": "^1.72.0"
+    "sass": "^1.72.0",
+    "strftime": "^0.10.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",

@@ -6,6 +6,7 @@ import {User} from "firebase/auth";
 import {Header} from "../../components/Header.tsx";
 import {signInWithGoogle} from "../../utils/authentication.ts";
 import {limit, orderBy, startAfter} from "firebase/firestore";
+import strftime from "strftime";
 
 // CSS
 import "./transactionsTable.scss";
@@ -16,7 +17,7 @@ export function TransactionPage() {
     const [authResolved, setAuthResolved] = useState(false);
     const [update, setUpdate] = useState(0);
     const [pageStarts, setPageStarts] = useState([Infinity]);
-    const itemsPerPage = 10;
+    const itemsPerPage = 14;
 
 
     if (!authResolved) {
@@ -131,7 +132,7 @@ export function TransactionPage() {
                 )}
                 {/* spacers to push buttons to the edges */}
                 <div className="spacer"></div>
-                <span className="page-counter">Page {currentPage}</span>
+                <span className="page-counter">Page {currentPage + 1}</span>
                 <div className="spacer"></div>
                 {transactions.length === itemsPerPage &&
                 <button onClick={() => {
@@ -155,8 +156,17 @@ function TransactionItem({data}: { data: Transaction }) {
             <td>{data.name}</td>
             <td>{data.category}</td>
             <td>{data.emoji}</td>
-            <td>{data.dateTime}</td>
-            <td>{data.amount}</td>
+            <td>{strftime("%d/%m/%y - %H:%M", new Date(data.dateTime))}</td>
+            {data.amount > 0 ?
+                <td className="d-flex justify-content-between" style={{color: "green"}}>
+                    <span>£</span>
+                    <span>{data.amount.toFixed(2)}</span>
+                </td> :
+                <td className="d-flex justify-content-between" style={{color: "red"}}>
+                    <span>£</span>
+                    <span>{data.amount.toFixed(2)}</span>
+                </td>
+            }
             <td>{data.notes}</td>
         </tr>
     );
