@@ -1,6 +1,5 @@
 import {Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
-
-type transactionPoint = { date: string; amount: number }
+import {transactionPoint} from "./GraphUtils.ts";
 
 interface Props {
     data: transactionPoint[];

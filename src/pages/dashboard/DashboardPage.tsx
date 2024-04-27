@@ -3,8 +3,8 @@ import "react-tiles-dnd/esm/index.css";
 import { TilesContainer, RenderTileFunction } from "react-tiles-dnd";
 import useWindowDimensions from "../../hooks/WindowDimensionsHook.tsx";
 import {Header} from "../../components/Header.tsx";
-import {ReactNode, useEffect, useState} from "react";
-import { getTransactionsFilterOrderBy, Transaction } from "../../utils/transaction.ts"
+import {useEffect, useState} from "react";
+import { getTransactionsFilterOrderBy } from "../../utils/transaction.ts"
 import {auth} from "../../utils/firebase.ts";
 import {orderBy} from "firebase/firestore";
 import {getCurrentBalance} from "../../utils/transaction_utils.ts";
@@ -15,43 +15,13 @@ import {CSVUpload} from "../../components/transactions/CSVUpload.tsx";
 import {InputTransaction} from "../../components/transactions/InputTransaction.tsx";
 import Graphs from "./Graphs.tsx"
 import test from "./test.tsx"
-
-type transactionPoint = { date: string; amount: number }
-type tsxContents = ReactNode;
-
-class TileElement {
-    private graph?: transactionPoint[];
-    private TSX?: () => tsxContents;
-
-    constructor(graph: transactionPoint[] | undefined, TSX: (() => tsxContents) | undefined) {
-        this.graph = graph;
-        this.TSX = TSX;
-    }
-
-    static newGraph(graph: transactionPoint[]): TileElement {
-        return new TileElement(graph, undefined);
-    }
-    static newTSX(TSX: () => tsxContents): TileElement {
-        return new TileElement(undefined, TSX);
-    }
-
-    isGraph(): boolean {
-        return typeof this.graph !== "undefined";
-    }
-
-    forceGetGraph(): transactionPoint[] {
-        return this.graph!;
-    }
-    forceGetTSX(): () => tsxContents {
-        return this.TSX!;
-    }
-}
+import {TileElement } from "./TileUtils.ts";
+import {finalGraphData, readTransactions} from "./GraphUtils.ts";
 
 export default function Dashboard() {
     const [balance, setBalance] = useState(0);
-    const [transactionPoints, setPoints] = useState<transactionPoint[][]>([[]]);
+    const [transactionPoints, setPoints] = useState<finalGraphData | null>(null);
     const [authResolved, setAuthResolved] = useState(false);
-    const [fetchResolved, setFetchResolved] = useState(false);
     const [showCSVModal, setShowCSVModal] = useState(false);
     const [showTransactionModal, setShowTransactionModal] = useState(false);
 
@@ -59,46 +29,10 @@ export default function Dashboard() {
         colSpan: tile.cols,
         rowSpan: tile.rows
     });
-    const cumulateTransactions = (points: transactionPoint[]): transactionPoint[] => {
-        let total = 0;
-        return points.map(value => {
-            total += value.amount;
-            return {date: value.date, amount: total};
-        })
-    }
-    const getDateString = (timestamp: number): string => {
-        const date = new Date(timestamp)
-        const day = date.getDate().toString().padStart(2, '0'); // Ensures two digits
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, add 1
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
-    const splitTransactions = (data: transactionPoint[]): void => {
-        const moneyIn: transactionPoint[] = []
-        const moneyOut: transactionPoint[] = []
-        data.forEach(t => {
-            if (t.amount > 0) {
-                moneyIn.push(t)
-            } else {
-                moneyOut.push(t)
-            }
-        })
-        setPoints([cumulateTransactions(data), cumulateTransactions(moneyIn), cumulateTransactions(moneyOut)])
-        console.log(transactionPoints)
-    }
-    const readTransactions = (data: Transaction[]): void => {
-        const result: transactionPoint[] = []
-        data.forEach(t => {
-            result.push({amount: t.amount, date: getDateString(t.dateTime)})
-        })
-        splitTransactions(result)
-    }
+
     const fetchTransactions = async (user: User) => {
-        try {
-            const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "desc"))
-            readTransactions(transactions)
-            setFetchResolved(true);
-        } catch (error) {}
+        const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "desc"))
+        setPoints(readTransactions(transactions));
     }
 
     const {width} = useWindowDimensions();
@@ -123,8 +57,8 @@ export default function Dashboard() {
             </FullscreenCenter>
         </>;
     }
-    if (!fetchResolved) {
-        auth.authStateReady().then(() => setAuthResolved(true));
+
+    if (!transactionPoints) {
         return <>
             <FullscreenCenter>
                 <div className="text-center">
@@ -135,9 +69,9 @@ export default function Dashboard() {
     }
 
     const transactionTiles = [
-        {d: TileElement.newGraph(transactionPoints[0]), cols:5, rows:2},
-        {d: TileElement.newGraph(transactionPoints[1]), cols:5, rows:2},
-        {d: TileElement.newGraph(transactionPoints[2]), cols:5, rows:2},
+        {d: TileElement.newGraph(transactionPoints.raw), cols:5, rows:2},
+        {d: TileElement.newGraph(transactionPoints.in), cols:5, rows:2},
+        {d: TileElement.newGraph(transactionPoints.out), cols:5, rows:2},
         {d: TileElement.newTSX(test), cols:1, rows:1}
     ];
 
