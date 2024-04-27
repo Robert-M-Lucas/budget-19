@@ -2,13 +2,14 @@ import {Transaction} from "../../utils/transaction.ts";
 
 type transactionPoint = { date: string; amount: number }
 
-const cumulateTransactions = (points: transactionPoint[]): transactionPoint[] => {
-    let total = 0;
-    return points.map(value => {
-        total += value.amount;
-        return {date: value.date, amount: total};
-    })
-}
+// const cumulateTransactions = (points: transactionPoint[]): transactionPoint[] => {
+//     let total = 0;
+//     return points.map(value => {
+//         total += value.amount;
+//         return {date: value.date, amount: total};
+//     })
+// }
+
 const getDateString = (timestamp: number): string => {
     const date = new Date(timestamp)
     const day = date.getDate().toString().padStart(2, '0'); // Ensures two digits
