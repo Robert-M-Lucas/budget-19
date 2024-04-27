@@ -2,10 +2,11 @@ import "./styles.css";
 import "react-tiles-dnd/esm/index.css";
 import {TilesContainer, RenderTileFunction} from "react-tiles-dnd";
 import useWindowDimensions from "../../hooks/WindowDimensionsHook.tsx";
-import React, {ReactNode, useEffect, useState} from "react";
+import  {ReactNode, useEffect, useState} from "react";
 import {Header} from "../../components/Header.tsx";
-import {getTransactionsFilterOrderBy, Transaction} from "../../utils/transaction.ts"
+import {getTransactionsFilterOrderBy} from "../../utils/transaction.ts"
 import {getCurrentBalance} from "../../utils/transaction_utils.ts";
+import {getUserPrefs, UserPrefs} from "../../utils/user_prefs.ts";
 import {readTransactions} from "./GraphUtils.ts";
 import {auth} from "../../utils/firebase.ts";
 import {orderBy} from "firebase/firestore";
@@ -51,17 +52,29 @@ class TileElement {
 export default function Dashboard() {
     const [balance, setBalance] = useState(0);
     const [transactionPoints, setPoints] = useState<transactionPoint[][]>([[]]);
+    const [userResolved, setUserResolved] = useState(false);
     const [authResolved, setAuthResolved] = useState(false);
     const [fetchResolved, setFetchResolved] = useState(false);
     const [showCSVModal, setShowCSVModal] = useState(false);
     const [showTransactionModal, setShowTransactionModal] = useState(false);
 
-    const fetchTransactions = async (user: User) => {
+    const fetchTransactions = async (user: User, goal: number) => {
         try {
             const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "asc"))
-            await readTransactions(transactions).then((t) => setPoints(t))
+            console.log("Check 0", transactions)
+            await readTransactions(transactions, goal).then((t) => {
+                console.log("Check 1", t)
+                setPoints(t)
+            })
             setFetchResolved(true);
-        } catch (error) {}
+        } catch (error) { console.error("Error in fetchTransactions", error) }
+    }
+    const fetchUserPrefs = async (user: User): Promise<UserPrefs | undefined> => {
+        try {
+            const u = await getUserPrefs(user);
+            setUserResolved(true);
+            return u
+        } catch (error) { console.error("Error in fetchUserPrefs", error) }
     }
 
     const {width} = useWindowDimensions();
@@ -71,7 +84,15 @@ export default function Dashboard() {
     useEffect(() => {
         if (auth.currentUser !== null) {
             getCurrentBalance(auth.currentUser).then((b) => setBalance(b));
-            fetchTransactions(auth.currentUser).then(() => console.log("Fetched Transactions", transactionPoints));
+            fetchUserPrefs(auth.currentUser).then((u) => {
+                console.log("Fetched UserPrefs", u)
+                if (u) {
+                    fetchTransactions(auth.currentUser!, u!.goal).then(() => {
+                        console.log("Fetched Transactions", transactionPoints)
+                    });
+                }
+            })
+
         }
     },[auth.currentUser])
 
@@ -81,17 +102,25 @@ export default function Dashboard() {
         return <>
             <FullscreenCenter>
                 <div className="text-center">
-                    <h1>Waiting for Auth</h1>
+                    <h1>Waiting for Authentication</h1>
+                </div>
+            </FullscreenCenter>
+        </>;
+    }
+    if (!userResolved) {
+        return <>
+            <FullscreenCenter>
+                <div className="text-center">
+                    <h1>Fetching User Data</h1>
                 </div>
             </FullscreenCenter>
         </>;
     }
     if (!fetchResolved) {
-        auth.authStateReady().then(() => setAuthResolved(true));
         return <>
             <FullscreenCenter>
                 <div className="text-center">
-                    <h1>Fetching</h1>
+                    <h1>Fetching User Transactions</h1>
                 </div>
             </FullscreenCenter>
         </>;
