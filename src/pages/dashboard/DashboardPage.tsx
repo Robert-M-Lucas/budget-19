@@ -7,19 +7,22 @@ import {useEffect, useState} from "react";
 import {Transaction, getTransactionsFilterOrderBy } from "../../utils/transaction.ts"
 import {auth} from "../../utils/firebase.ts";
 import {orderBy} from "firebase/firestore";
-import { User } from "firebase/auth";
 import {FullscreenCenter} from "../../components/FullscreenCenter.tsx";
 import Graphs from "./Graphs.tsx"
 import {getTileSize, TileElement} from "./TileUtils.ts";
 import {finalGraphData, readTransactions} from "./GraphUtils.ts";
 import {signInWithGoogle} from "../../utils/authentication.ts";
-import totalTile from "./Tiles.tsx";
+import totalTile from "./TotalTile.tsx";
+import {getUserPrefs, UserPrefs} from "../../utils/user_prefs.ts";
+import {User} from "firebase/auth";
+import goalsTile from "./GoalsTile.tsx";
 
 export default function Dashboard() {
     // const [balance, setBalance] = useState(0);
     const [transactionPoints, setPoints] = useState<finalGraphData | null>(null);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [authResolved, setAuthResolved] = useState(false);
+    const [userPrefs, setUserPrefs] = useState<UserPrefs | null>(null);
     // const [showCSVModal, setShowCSVModal] = useState(false);
     // const [showTransactionModal, setShowTransactionModal] = useState(false);
     const [update, setUpdate] = useState(0)
@@ -37,6 +40,7 @@ export default function Dashboard() {
     useEffect(() => {
         if (auth.currentUser !== null) {
             fetchTransactions(auth.currentUser).then();
+            getUserPrefs(auth.currentUser).then((prefs) => setUserPrefs(prefs));
         }
     },[auth.currentUser])
 
@@ -69,7 +73,7 @@ export default function Dashboard() {
         </>;
     }
 
-    if (!transactionPoints) {
+    if (!transactionPoints || !userPrefs) {
         return <>
             <Header/>
             <FullscreenCenter>
@@ -82,6 +86,7 @@ export default function Dashboard() {
 
     const transactionTiles: TileElement[] = [
         TileElement.newTSX(() => totalTile(transactions), 2, 1, columns),
+        TileElement.newTSX(() => (goalsTile(userPrefs)), 2, 1, columns),
         TileElement.newGraph(transactionPoints.raw, 3, 2, columns),
         TileElement.newGraph(transactionPoints.in, 3, 2, columns),
         TileElement.newGraph(transactionPoints.out, 3, 2, columns),
@@ -99,19 +104,7 @@ export default function Dashboard() {
     return (
         <div className="vh-100 d-flex flex-column">
             <Header/>
-            {/*<div>*/}
-            {/*    <Button variant="primary" onClick={() => setShowCSVModal(true)}>Upload CSV</Button>*/}
-            {/*    <CSVUpload show={showCSVModal} setShow={setShowCSVModal}/>*/}
-
-            {/*    <Button variant="primary" onClick={() => setShowTransactionModal(true)}>Add Transaction</Button>*/}
-            {/*    <InputTransaction show={showTransactionModal} setShow={setShowTransactionModal}/>*/}
-            {/*</div>*/}
             <div className="App ps-5 pe-5 mt-3">
-                {/*<button onClick={() => {*/}
-                {/*    console.log(transactionPoints)*/}
-                {/*}}>Console Log Transactions*/}
-                {/*</button>*/}
-                {/*{balance}*/}
                 <TilesContainer
                     data={transactionTiles}
                     renderTile={renderTile}
