@@ -3,7 +3,7 @@ import "react-tiles-dnd/esm/index.css";
 import { TilesContainer, RenderTileFunction } from "react-tiles-dnd";
 import useWindowDimensions from "../../hooks/WindowDimensionsHook.tsx";
 import {Header} from "../../components/Header.tsx";
-import React, {ReactNode, useEffect, useState} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import { getTransactionsFilterOrderBy, Transaction } from "../../utils/transaction.ts"
 import {auth} from "../../utils/firebase.ts";
 import {orderBy} from "firebase/firestore";
