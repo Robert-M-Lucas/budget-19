@@ -1,33 +1,23 @@
 import {Transaction} from "../../utils/transaction.ts";
+import strftime from "strftime";
 
-type transactionPoint = { date: string; amount: number; goal: number }
+export type transactionPoint = { date: string; amount: number }
+export type finalGraphData = {raw: transactionPoint[], in: transactionPoint[], out: transactionPoint[]};
 
-export const cumulateTransactions = (points: transactionPoint[]): transactionPoint[] => {
+function cumulateTransactions(points: transactionPoint[]): transactionPoint[] {
     let total = 0;
     return points.map(value => {
         total += value.amount;
-        return {date: value.date, amount: total, goal: value.goal};
+        value.amount = total;
+        return value;
     })
 }
-const getDateString = (timestamp: number): string => {
-    const date = new Date(timestamp)
-    const day = date.getDate().toString().padStart(2, '0'); // Ensures two digits
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, add 1
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-}
-export const readTransactions = async (data: Transaction[], goal: number): Promise<transactionPoint[][]> => {
-    const result: transactionPoint[] = []
-    data.forEach(t => {
-        result.push({amount: t.amount, date: getDateString(t.dateTime), goal: 0})
-    })
-    // Change the last bit of data to set the goal
-    const lastElem = result[result.length - 1]
-    result[result.length - 1] = {amount: lastElem.amount, date: lastElem.date, goal: goal}
 
-    return splitTransactions(result)
+function getDateString(timestamp: number): string  {
+    return strftime("%d/%m/%y", new Date(timestamp))
 }
-export const splitTransactions = (data: transactionPoint[]): transactionPoint[][] => {
+
+function splitTransactions (data: transactionPoint[]): finalGraphData {
     const moneyIn: transactionPoint[] = []
     const moneyOut: transactionPoint[] = []
     data.forEach(t => {
@@ -37,5 +27,13 @@ export const splitTransactions = (data: transactionPoint[]): transactionPoint[][
             moneyOut.push(t)
         }
     })
-    return ([cumulateTransactions(data), cumulateTransactions(moneyIn), cumulateTransactions(moneyOut)])
+    return {raw: cumulateTransactions(data), in: cumulateTransactions(moneyIn), out: cumulateTransactions(moneyOut)};
+}
+
+export function readTransactions(data: Transaction[]): finalGraphData {
+    return splitTransactions(
+        data.map((t) => {
+            return {date: getDateString(t.dateTime), amount: t.amount}
+        })
+    );
 }
