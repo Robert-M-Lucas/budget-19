@@ -21,13 +21,13 @@ export class UserPrefs {
         this.wantsBudget = round(wantsBudget, 2);
     }
 
-    static newChecked(needsBudget: number, wantsBudget: number): UserPrefs | Error {
+    static newChecked(needsBudget: number, wantsBudget: number): UserPrefs {
         if (needsBudget > 1) {
-            return new Error("needsBudget > 1!");
+            throw new Error("needsBudget > 1!");
         }
 
         if (needsBudget + wantsBudget > 1) {
-            return new Error("needsBudget + wantsBudget > 1!");
+            throw new Error("needsBudget + wantsBudget > 1!");
         }
 
         return new UserPrefs(needsBudget, wantsBudget);

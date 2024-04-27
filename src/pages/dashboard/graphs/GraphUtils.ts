@@ -1,7 +1,7 @@
-import {Transaction} from "../../utils/transaction.ts";
+import {Transaction} from "../../../utils/transaction.ts";
 import strftime from "strftime";
 
-type transactionPoint = { date: string; amount: number; goal: number }
+export type transactionPoint = { date: string; amount: number; goal: number }
 export type finalGraphData = {raw: transactionPoint[], in: transactionPoint[], out: transactionPoint[]};
 
 function cumulateTransactions(points: transactionPoint[]): transactionPoint[] {

@@ -1,6 +1,5 @@
 import "./styles.css";
 import "react-tiles-dnd/esm/index.css";
-import { TilesContainer, RenderTileFunction } from "react-tiles-dnd";
 import useWindowDimensions from "../../hooks/WindowDimensionsHook.tsx";
 import {Header} from "../../components/Header.tsx";
 import {useEffect, useState} from "react";
@@ -8,24 +7,31 @@ import {Transaction, getTransactionsFilterOrderBy } from "../../utils/transactio
 import {auth} from "../../utils/firebase.ts";
 import {orderBy} from "firebase/firestore";
 import {FullscreenCenter} from "../../components/FullscreenCenter.tsx";
-import Graphs from "./Graphs.tsx"
+import Graphs from "./graphs/Graphs.tsx"
 import {getTileSize, TileElement} from "./TileUtils.ts";
-import {finalGraphData, readTransactions} from "./GraphUtils.ts";
+import {finalGraphData, readTransactions} from "./graphs/GraphUtils.ts";
 import {signInWithGoogle} from "../../utils/authentication.ts";
-import totalTile from "./TotalTile.tsx";
+import totalTile from "./total tile/TotalTile.tsx";
 import {getUserPrefs, UserPrefs} from "../../utils/user_prefs.ts";
 import {User} from "firebase/auth";
-import goalsTile from "./GoalsTile.tsx";
+import goalsTile from "./goals tile/GoalsTile.tsx";
+import {RenderTileFunction, TilesContainer} from "react-tiles-dnd";
 
 export default function Dashboard() {
     // const [balance, setBalance] = useState(0);
     const [transactionPoints, setPoints] = useState<finalGraphData | null>(null);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [authResolved, setAuthResolved] = useState(false);
+    const [authResolved, setAuthResolved] = useState<Boolean>(false);
     const [userPrefs, setUserPrefs] = useState<UserPrefs | null>(null);
+    // const draggable = useRef(true);
     // const [showCSVModal, setShowCSVModal] = useState(false);
     // const [showTransactionModal, setShowTransactionModal] = useState(false);
     const [update, setUpdate] = useState(0)
+
+    const forceUpdate = () => {
+        setUpdate(update + 1);
+        setUserPrefs(null);
+    };
 
     const fetchTransactions = async (user: User) => {
         const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "desc"));
@@ -42,7 +48,7 @@ export default function Dashboard() {
             fetchTransactions(auth.currentUser).then();
             getUserPrefs(auth.currentUser).then((prefs) => setUserPrefs(prefs));
         }
-    },[auth.currentUser])
+    },[auth.currentUser, update]);
 
     if (!authResolved) {
         auth.authStateReady().then(() => setAuthResolved(true));
@@ -86,13 +92,13 @@ export default function Dashboard() {
 
     const transactionTiles: TileElement[] = [
         TileElement.newTSX(() => totalTile(transactions), 2, 1, columns),
-        TileElement.newTSX(() => (goalsTile(userPrefs)), 2, 1, columns),
+        TileElement.newTSX(() => (goalsTile(userPrefs, forceUpdate)), 2, 2, columns),
         TileElement.newGraph(transactionPoints.raw, 3, 2, columns),
         TileElement.newGraph(transactionPoints.in, 3, 2, columns),
         TileElement.newGraph(transactionPoints.out, 3, 2, columns),
     ];
 
-    const renderTile: RenderTileFunction<typeof transactionTiles[0]> = ({ data, isDragging }) => (
+    const renderTile: RenderTileFunction<TileElement> = ({ data, isDragging }) => (
         <div style={{padding: ".75rem", width: "100%"}}>
             <div className={`tile card ${isDragging ? "dragging" : ""}`}
                  style={{width: "100%", height: "100%"}}>

@@ -1,5 +1,5 @@
 import {ReactNode} from "react";
-import { Transaction } from "../../utils/transaction";
+import { Transaction } from "../../../utils/transaction.ts";
 import {max, min} from "lodash";
 
 export default function totalTile(transactions: Transaction[]): ReactNode {

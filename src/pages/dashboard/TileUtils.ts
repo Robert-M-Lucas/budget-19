@@ -1,5 +1,5 @@
 import {ReactNode} from "react";
-import {transactionPoint} from "./GraphUtils.ts";
+import {transactionPoint} from "./graphs/GraphUtils.ts";
 import {min} from "lodash";
 
 type tsxContents = ReactNode;
