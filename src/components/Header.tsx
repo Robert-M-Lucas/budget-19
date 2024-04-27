@@ -42,7 +42,7 @@ export function Header() {
             {/* Links to transactions page with table of expenses */}
             <li><Link to="/transactions" className={`header-item ${isLoggedIn ? "header-item" : "text-muted bg-transparent"}`}>Transactions</Link></li>
 
-            <li><Link to="/test" className="header-item">Firestore Test</Link></li>
+            <li><Link to="/tiles" className="header-item">Firestore Test</Link></li>
 
             {displayName && <li><span className="username">{displayName}</span></li>}
 

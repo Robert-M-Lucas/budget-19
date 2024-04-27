@@ -1,17 +1,52 @@
 import {collection, doc, DocumentSnapshot, getDoc, setDoc, SnapshotOptions} from "firebase/firestore";
 import {User} from "firebase/auth";
 import {db} from "./firebase.ts";
+import {round} from "lodash";
 
 
 export class UserPrefs {
-    public goal: number;
+    private readonly needsBudget: number;
+    private readonly wantsBudget: number;
 
-    constructor(goal: number) {
-        this.goal = goal;
+    private constructor(needsBudget: number, wantsBudget: number) {
+        if (needsBudget > 1) {
+            needsBudget = 1;
+        }
+
+        if (needsBudget + wantsBudget > 1) {
+            wantsBudget = 1 - needsBudget;
+        }
+
+        this.needsBudget = round(needsBudget, 2);
+        this.wantsBudget = round(wantsBudget, 2);
+    }
+
+    static newChecked(needsBudget: number, wantsBudget: number): UserPrefs {
+        if (needsBudget > 1) {
+            throw new Error("needsBudget > 1!");
+        }
+
+        if (needsBudget + wantsBudget > 1) {
+            throw new Error("needsBudget + wantsBudget > 1!");
+        }
+
+        return new UserPrefs(needsBudget, wantsBudget);
     }
 
     static default(): UserPrefs {
-        return new UserPrefs(100);
+        return new UserPrefs(0.5, 0.3);
+    }
+
+    getNeedsBudget(): number {
+        return this.needsBudget;
+    }
+
+    getWantsBudget(): number {
+        return this.wantsBudget;
+    }
+
+    getSavingsBudget(): number {
+        return round(1 - this.wantsBudget - this.needsBudget, 2);
     }
 
     // Utility method for creating `Transactions`
@@ -20,7 +55,8 @@ export class UserPrefs {
         if (!data) {
             throw Error("No data returned for snapshot!");
         }
-        return new UserPrefs(data.goal);
+
+        return new UserPrefs(round(data.needsBudget, 2), round(data.wantsBudget, 2));
     }
 
     toSendObject(): object {

@@ -14,7 +14,7 @@ describe("Firestore UserPrefs Tests", () => {
 
         expect(_.isEqual(prefs, UserPrefs.default()), "Non-existent UserPrefs should return default").toBeTruthy();
         
-        prefs.goal = 213;
+        const new_prefs = UserPrefs.newChecked(0.4, 0.2);
         
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
@@ -24,7 +24,7 @@ describe("Firestore UserPrefs Tests", () => {
         // @ts-expect-error
         const read_prefs = await getUserPrefs(user);
 
-        console.log(prefs);
+        console.log(new_prefs);
         console.log(read_prefs);
 
         expect(_.isEqual(read_prefs, prefs), "UserPref changes to be read").toBeTruthy();

@@ -1,151 +1,108 @@
 import "./styles.css";
 import "react-tiles-dnd/esm/index.css";
-import { TilesContainer, RenderTileFunction } from "react-tiles-dnd";
 import useWindowDimensions from "../../hooks/WindowDimensionsHook.tsx";
 import {Header} from "../../components/Header.tsx";
-import {ReactNode, useEffect, useState} from "react";
-import { getTransactionsFilterOrderBy, Transaction } from "../../utils/transaction.ts"
+import {useEffect, useState} from "react";
+import {Transaction, getTransactionsFilterOrderBy } from "../../utils/transaction.ts"
 import {auth} from "../../utils/firebase.ts";
 import {orderBy} from "firebase/firestore";
-import {getCurrentBalance} from "../../utils/transaction_utils.ts";
-import { User } from "firebase/auth";
 import {FullscreenCenter} from "../../components/FullscreenCenter.tsx";
-import {Button} from "react-bootstrap";
-import {CSVUpload} from "../../components/transactions/CSVUpload.tsx";
-import {InputTransaction} from "../../components/transactions/InputTransaction.tsx";
-import Graphs from "./Graphs.tsx"
-import test from "./test.tsx"
-
-type transactionPoint = { date: string; amount: number }
-type tsxContents = ReactNode;
-
-class TileElement {
-    private graph?: transactionPoint[];
-    private TSX?: () => tsxContents;
-
-    constructor(graph: transactionPoint[] | undefined, TSX: (() => tsxContents) | undefined) {
-        this.graph = graph;
-        this.TSX = TSX;
-    }
-
-    static newGraph(graph: transactionPoint[]): TileElement {
-        return new TileElement(graph, undefined);
-    }
-    static newTSX(TSX: () => tsxContents): TileElement {
-        return new TileElement(undefined, TSX);
-    }
-
-    isGraph(): boolean {
-        return typeof this.graph !== "undefined";
-    }
-
-    forceGetGraph(): transactionPoint[] {
-        return this.graph!;
-    }
-    forceGetTSX(): () => tsxContents {
-        return this.TSX!;
-    }
-}
+import Graphs from "./graphs/Graphs.tsx"
+import {getTileSize, TileElement} from "./TileUtils.ts";
+import {finalGraphData, readTransactions} from "./graphs/GraphUtils.ts";
+import {signInWithGoogle} from "../../utils/authentication.ts";
+import totalTile from "./total tile/TotalTile.tsx";
+import {getUserPrefs, UserPrefs} from "../../utils/user_prefs.ts";
+import {User} from "firebase/auth";
+import goalsTile from "./goals tile/GoalsTile.tsx";
+import {RenderTileFunction, TilesContainer} from "react-tiles-dnd";
 
 export default function Dashboard() {
-    const [balance, setBalance] = useState(0);
-    const [transactionPoints, setPoints] = useState<transactionPoint[][]>([[]]);
-    const [authResolved, setAuthResolved] = useState(false);
-    const [fetchResolved, setFetchResolved] = useState(false);
-    const [showCSVModal, setShowCSVModal] = useState(false);
-    const [showTransactionModal, setShowTransactionModal] = useState(false);
+    // const [balance, setBalance] = useState(0);
+    const [transactionPoints, setPoints] = useState<finalGraphData | null>(null);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [authResolved, setAuthResolved] = useState<Boolean>(false);
+    const [userPrefs, setUserPrefs] = useState<UserPrefs | null>(null);
+    // const draggable = useRef(true);
+    // const [showCSVModal, setShowCSVModal] = useState(false);
+    // const [showTransactionModal, setShowTransactionModal] = useState(false);
+    const [update, setUpdate] = useState(0)
 
-    const tileSize = (tile: typeof transactionTiles[0]) => ({
-        colSpan: tile.cols,
-        rowSpan: tile.rows
-    });
-    const cumulateTransactions = (points: transactionPoint[]): transactionPoint[] => {
-        let total = 0;
-        return points.map(value => {
-            total += value.amount;
-            return {date: value.date, amount: total};
-        })
-    }
-    const getDateString = (timestamp: number): string => {
-        const date = new Date(timestamp)
-        const day = date.getDate().toString().padStart(2, '0'); // Ensures two digits
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed, add 1
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    }
-    const splitTransactions = (data: transactionPoint[]): void => {
-        const moneyIn: transactionPoint[] = []
-        const moneyOut: transactionPoint[] = []
-        data.forEach(t => {
-            if (t.amount > 0) {
-                moneyIn.push(t)
-            } else {
-                moneyOut.push(t)
-            }
-        })
-        setPoints([cumulateTransactions(data), cumulateTransactions(moneyIn), cumulateTransactions(moneyOut)])
-        console.log(transactionPoints)
-    }
-    const readTransactions = (data: Transaction[]): void => {
-        const result: transactionPoint[] = []
-        data.forEach(t => {
-            result.push({amount: t.amount, date: getDateString(t.dateTime)})
-        })
-        splitTransactions(result)
-    }
+    const forceUpdate = () => {
+        setUpdate(update + 1);
+        setUserPrefs(null);
+    };
+
     const fetchTransactions = async (user: User) => {
-        try {
-            const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "desc"))
-            readTransactions(transactions)
-            setFetchResolved(true);
-        } catch (error) {}
+        const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "desc"));
+        setTransactions(transactions);
+        setPoints(readTransactions(transactions));
     }
 
     const {width} = useWindowDimensions();
-    const columns = Math.max(Math.floor(width / 200), 1);
+    const columns = Math.max(Math.floor(width / 180), 1);
 
     // Transaction Loading and Handling
     useEffect(() => {
         if (auth.currentUser !== null) {
-            getCurrentBalance(auth.currentUser).then((b) => setBalance(b));
-            fetchTransactions(auth.currentUser).then(() => console.log("Fetched Transactions", transactionPoints));
+            fetchTransactions(auth.currentUser).then();
+            getUserPrefs(auth.currentUser).then((prefs) => setUserPrefs(prefs));
         }
-    },[auth.currentUser])
-
+    },[auth.currentUser, update]);
 
     if (!authResolved) {
         auth.authStateReady().then(() => setAuthResolved(true));
         return <>
+            <Header/>
             <FullscreenCenter>
                 <div className="text-center">
-                    <h1>Waiting for Auth</h1>
-                </div>
-            </FullscreenCenter>
-        </>;
-    }
-    if (!fetchResolved) {
-        auth.authStateReady().then(() => setAuthResolved(true));
-        return <>
-            <FullscreenCenter>
-                <div className="text-center">
-                    <h1>Fetching</h1>
+                    <h1>Waiting for Authentication</h1>
                 </div>
             </FullscreenCenter>
         </>;
     }
 
-    const transactionTiles = [
-        {d: TileElement.newGraph(transactionPoints[0]), cols:5, rows:2},
-        {d: TileElement.newGraph(transactionPoints[1]), cols:5, rows:2},
-        {d: TileElement.newGraph(transactionPoints[2]), cols:5, rows:2},
-        {d: TileElement.newTSX(test), cols:1, rows:1}
+    if (auth.currentUser === null) {
+        auth.onAuthStateChanged(() => {
+            setUpdate(update + 1);
+        });
+        return <>
+            <Header/>
+            <FullscreenCenter>
+                <div className="text-center">
+                    <h1>Not Logged In</h1>
+                    <button type="button" className="login-with-google-btn" onClick={signInWithGoogle}>
+                        Sign in with Google
+                    </button>
+                </div>
+            </FullscreenCenter>
+        </>;
+    }
+
+    if (!transactionPoints || !userPrefs) {
+        return <>
+            <Header/>
+            <FullscreenCenter>
+                <div className="text-center">
+                    <h1>Fetching {transactionPoints ? "" : "transactions"}{!transactionPoints && !userPrefs ? "," : ""} {userPrefs ? "" : "goals"}</h1>
+                </div>
+            </FullscreenCenter>
+        </>;
+    }
+
+    const transactionTiles: TileElement[] = [
+        TileElement.newTSX(() => totalTile(transactions), 2, 1, columns),
+        TileElement.newTSX(() => (goalsTile(userPrefs, forceUpdate)), 2, 2, columns),
+        TileElement.newGraph(transactionPoints.raw, 3, 2, columns),
+        TileElement.newGraph(transactionPoints.in, 3, 2, columns),
+        TileElement.newGraph(transactionPoints.out, 3, 2, columns),
     ];
 
-    const renderFirebase: RenderTileFunction<typeof transactionTiles[0]> = ({ data, isDragging }) => (
+    const renderTile: RenderTileFunction<TileElement> = ({ data, isDragging }) => (
         <div style={{padding: ".75rem", width: "100%"}}>
             <div className={`tile card ${isDragging ? "dragging" : ""}`}
                  style={{width: "100%", height: "100%"}}>
-                {data.d.isGraph() ? <Graphs data={data.d.forceGetGraph()}/> : data.d.forceGetTSX()()}
+                {data.isGraph() ? <Graphs data={data.forceGetGraph()}/> : data.forceGetTSX()()}
             </div>
         </div>
     );
@@ -153,23 +110,11 @@ export default function Dashboard() {
     return (
         <div className="vh-100 d-flex flex-column">
             <Header/>
-            <div>
-                <Button variant="primary" onClick={() => setShowCSVModal(true)}>Upload CSV</Button>
-                <CSVUpload show={showCSVModal} setShow={setShowCSVModal}/>
-
-                <Button variant="primary" onClick={() => setShowTransactionModal(true)}>Add Transaction</Button>
-                <InputTransaction show={showTransactionModal} setShow={setShowTransactionModal}/>
-            </div>
             <div className="App ps-5 pe-5 mt-3">
-                <button onClick={() => {
-                    console.log(transactionPoints)
-                }}>Console Log Transactions
-                </button>
-                {balance}
                 <TilesContainer
                     data={transactionTiles}
-                    renderTile={renderFirebase}
-                    tileSize={tileSize}
+                    renderTile={renderTile}
+                    tileSize={getTileSize}
                     ratio={1}
                     columns={columns}
                 ></TilesContainer>

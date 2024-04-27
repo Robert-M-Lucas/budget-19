@@ -42,7 +42,7 @@ Start Firebase emulator(s): `firebase emulators:start`
 
 ### Test Deployment
 
-Creating a test deployment to Firebase:
+Creating a tiles deployment to Firebase:
 ```
 npm run build
 firebase hosting:channel:deploy [Test Deployment Name]
@@ -51,7 +51,7 @@ firebase hosting:channel:deploy [Test Deployment Name]
 ### Production Deployment
 
 Making a [pull request](https://github.com/Robert-M-Lucas/budget-19/compare)
-will automatically create a test deployment to Firebase (i.e. not
+will automatically create a tiles deployment to Firebase (i.e. not
 overwrite the production app). You should see a message below your new pull
 request notifying you that your changes are being deployed. Click on
 the link shown when this is complete to view your changes. The pull

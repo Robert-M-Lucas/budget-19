@@ -26,7 +26,7 @@ export const router = createBrowserRouter([
         element: <TransactionPage/>,
     },
     {
-        path: "/user-test",
+        path: "/user-tiles",
         element: <IndexPage/>,
         errorElement:<_404Page/>
     },
@@ -47,7 +47,7 @@ export const router = createBrowserRouter([
         element: <SampleModal/>,
     },
     {
-        path: "/test",
+        path: "/tiles",
         element: <TestFirestorePage/>,
     },
 ]);
