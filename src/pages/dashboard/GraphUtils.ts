@@ -1,12 +1,12 @@
 import {Transaction} from "../../utils/transaction.ts";
 
-type transactionPoint = { date: string; amount: number }
+type transactionPoint = { date: string; amount: number; goal: number }
 
 export const cumulateTransactions = (points: transactionPoint[]): transactionPoint[] => {
     let total = 0;
     return points.map(value => {
         total += value.amount;
-        return {date: value.date, amount: total};
+        return {date: value.date, amount: total, goal: value.goal};
     })
 }
 const getDateString = (timestamp: number): string => {
@@ -16,11 +16,15 @@ const getDateString = (timestamp: number): string => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
 }
-export const readTransactions = async (data: Transaction[]): Promise<transactionPoint[][]> => {
+export const readTransactions = async (data: Transaction[], goal: number): Promise<transactionPoint[][]> => {
     const result: transactionPoint[] = []
     data.forEach(t => {
-        result.push({amount: t.amount, date: getDateString(t.dateTime)})
+        result.push({amount: t.amount, date: getDateString(t.dateTime), goal: 0})
     })
+    // Change the last bit of data to set the goal
+    const lastElem = result[result.length - 1]
+    result[result.length - 1] = {amount: lastElem.amount, date: lastElem.date, goal: goal}
+
     return splitTransactions(result)
 }
 export const splitTransactions = (data: transactionPoint[]): transactionPoint[][] => {

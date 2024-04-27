@@ -1,6 +1,6 @@
-import {Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
+import {Line, LineChart, ResponsiveContainer, XAxis, YAxis} from "recharts";
 
-type transactionPoint = { date: string; amount: number }
+type transactionPoint = { date: string; amount: number; goal: number }
 
 interface Props {
     data: transactionPoint[];
@@ -12,8 +12,8 @@ export default function Graphs({data}: Props) {
             <LineChart data={data}>
                 <XAxis dataKey="date"/>
                 <YAxis/>
-                <Tooltip/>
                 <Line type="monotone" dataKey="amount" stroke="#8884d8"/>
+                <Line type="monotone" dataKey="goal" stroke="#000000"/>
             </LineChart>
         </ResponsiveContainer>
     );
