@@ -81,7 +81,7 @@ export default function Dashboard() {
     }
 
     const transactionTiles: TileElement[] = [
-        TileElement.newTSX(() => totalTile(transactions), 1, 1, columns),
+        TileElement.newTSX(() => totalTile(transactions), 2, 1, columns),
         TileElement.newGraph(transactionPoints.raw, 3, 2, columns),
         TileElement.newGraph(transactionPoints.in, 3, 2, columns),
         TileElement.newGraph(transactionPoints.out, 3, 2, columns),
