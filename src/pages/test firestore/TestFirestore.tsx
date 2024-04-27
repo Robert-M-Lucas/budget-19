@@ -15,6 +15,7 @@ import {Header} from "../../components/Header.tsx";
 import { orderBy } from "firebase/firestore";
 import {User} from "firebase/auth";
 import {getUserPrefs, setUserPrefs, UserPrefs} from "../../utils/user_prefs.ts";
+import {round} from "lodash";
 
 function writeSampleData() {
     if (auth.currentUser === null) {
@@ -95,11 +96,14 @@ export function TestFirestorePage() {
                 <h4>UserPrefs</h4>
                 {
                     userPrefs ? <>
-                    <p>Goal: {userPrefs.goal}</p>
+                    <p>Goal: {userPrefs.getNeedsBudget()} | {userPrefs.getWantsBudget()} | {userPrefs.getSavingsBudget()}</p>
                     <button className="mb-4" onClick={() => {
-                        userPrefs!.goal += 100;
-                        setUserPrefs(auth.currentUser!, userPrefs).then(() => setUpdate(update + 1));
-                    }}>Increment
+                        const needs = round(faker.number.float({min: 0, max: 0.5}), 2);
+                        const wants = round(faker.number.float({min: 0, max: 0.5}), 2);
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-expect-error
+                        setUserPrefs(auth.currentUser!, UserPrefs.newChecked(needs, wants)).then(() => setUpdate(update + 1));
+                    }}>Randomise
                     </button>
                 </> : <p>Loading</p>
                 }
