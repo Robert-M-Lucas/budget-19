@@ -31,9 +31,15 @@ export default function Dashboard() {
     // const [showTransactionModal, setShowTransactionModal] = useState(false);
     const [update, setUpdate] = useState(0)
 
-    const forceUpdate = () => {
+    const forceUpdatePrefs = () => {
         setUpdate(update + 1);
         setUserPrefs(null);
+    };
+
+    const forceUpdateTransactions = () => {
+        setUpdate(update + 1);
+        setPoints(null);
+        setTransactions([]);
     };
 
     const fetchTransactions = async (user: User) => {
@@ -48,10 +54,15 @@ export default function Dashboard() {
     // Transaction Loading and Handling
     useEffect(() => {
         if (auth.currentUser !== null) {
-            fetchTransactions(auth.currentUser).then();
-            getUserPrefs(auth.currentUser).then((prefs) => setUserPrefs(prefs));
+            if (transactionPoints === null) {
+                fetchTransactions(auth.currentUser).then();
+            }
+            if (userPrefs === null) {
+                getUserPrefs(auth.currentUser).then((prefs) => setUserPrefs(prefs));
+            }
         }
-    },[auth.currentUser, update]);
+        // eslint-disable-next-line
+    },[update]);
 
     if (!authResolved) {
         auth.authStateReady().then(() => setAuthResolved(true));
@@ -95,10 +106,10 @@ export default function Dashboard() {
 
     const transactionTiles: TileElement[] = [
         TileElement.newTSX(() => totalTile(transactions), 2, 1, columns),
-        TileElement.newTSX(() => (goalSettingTile(userPrefs, forceUpdate)), 2, 2, columns),
+        TileElement.newTSX(() => (goalSettingTile(userPrefs, forceUpdatePrefs)), 2, 2, columns),
         TileElement.newTSX(() => goalTracking(transactions, userPrefs), 3, 1, columns),
         TileElement.newTSX(() => motivationTile(transactions, userPrefs), 1, 1, columns),
-        TileElement.newTSX(AddTransactionTile, 1, 1, columns),
+        TileElement.newTSX(() => AddTransactionTile(forceUpdateTransactions), 1, 1, columns),
         TileElement.newGraph(transactionPoints.raw, 3, 2, columns),
         TileElement.newGraph(transactionPoints.in, 3, 2, columns),
         TileElement.newGraph(transactionPoints.out, 3, 2, columns),

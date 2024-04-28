@@ -1,12 +1,12 @@
 import {Transaction} from "../../../utils/transaction.ts";
 import {ReactNode} from "react";
-import {min} from "lodash";
+import {max} from "lodash";
 import {UserPrefs} from "../../../utils/user_prefs.ts";
 import {nanDisplay} from "../../../utils/numbers.ts";
 
 export default function motivationTile(transactions: Transaction[], userPrefs: UserPrefs): ReactNode {
     const balance = transactions.reduce((prev, curr): number => prev + curr.amount, 0);
-    const expenses = transactions.reduce((prev, curr): number => prev + min([curr.amount, 0])!, 0);
+    const income = transactions.reduce((prev, curr): number => prev + max([curr.amount, 0])!, 0);
     const needs = transactions.reduce((prev, curr): number => {
         if (curr.getCategoryCategory() === "Needs" && curr.amount < 0) {
             return prev - curr.amount;
@@ -26,13 +26,13 @@ export default function motivationTile(transactions: Transaction[], userPrefs: U
         return prev;
     }, 0);
 
-    const needsTarget = -expenses * userPrefs.getNeedsBudget();
-    const wantsTarget = -expenses * userPrefs.getWantsBudget();
-    const savingsTarget = -expenses * userPrefs.getSavingsBudget();
+    const needsTarget = income * userPrefs.getNeedsBudget();
+    const wantsTarget = income * userPrefs.getWantsBudget();
+    const savingsTarget = income * userPrefs.getSavingsBudget();
 
-    const needsOffsetPercentage = Math.round((needs - needsTarget) / -expenses * 100);
-    const wantsOffsetPercentage = Math.round((wants - wantsTarget) / -expenses * 100);
-    const savingsBalanceOffsetPercentage = Math.round(((savings + balance) - savingsTarget) / -expenses * 100);
+    const needsOffsetPercentage = Math.round((needs - needsTarget) / income * 100);
+    const wantsOffsetPercentage = Math.round((wants - wantsTarget) / income * 100);
+    const savingsBalanceOffsetPercentage = Math.round(((savings + balance) - savingsTarget) / income * 100);
 
     const finalOffsetPercentage = (-needsOffsetPercentage) + (-wantsOffsetPercentage) + savingsBalanceOffsetPercentage;
 
