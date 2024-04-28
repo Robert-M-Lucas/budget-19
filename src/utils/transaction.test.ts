@@ -3,7 +3,7 @@ import {
     getTransactions,
     getTransactionsByDocName,
     getTransactionsFilterOrderBy, overwriteTransaction, overwriteTransactionsBatched,
-    Transaction,
+    Transaction, TransactionCategories,
     writeNewTransaction,
     writeNewTransactionsBatched
 } from "./transaction.ts";
@@ -11,6 +11,7 @@ import {faker, fakerEN_GB} from "@faker-js/faker";
 import _ from "lodash";
 import { describe, expect, test } from "vitest";
 import {where} from "firebase/firestore";
+import {emojis} from "../components/transactions/Transaction.ts";
 
 function fakeTransaction(uid: string, name?: string): Transaction {
     return new Transaction(
@@ -28,6 +29,9 @@ function fakeTransaction(uid: string, name?: string): Transaction {
 }
 
 describe("Firestore Transaction Tests", () => {
+    test("Category Integrity Test", () => {
+        expect(_.isEqual(new Set(Object.keys(emojis)), TransactionCategories),  "Emoji keys do not match transaction categories").toBeTruthy();
+    });
     test("Write/Read Test", async () => {
         const user = { uid: "sample_uid" }
 

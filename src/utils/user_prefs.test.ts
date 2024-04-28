@@ -1,10 +1,14 @@
 import {describe, expect, test} from "vitest";
 import {faker} from "@faker-js/faker";
-import {UserPrefs, getUserPrefs, setUserPrefs} from "./user_prefs.ts";
+import {UserPrefs, getUserPrefs, setUserPrefs, Categories} from "./user_prefs.ts";
 import _ from "lodash";
+import {TransactionCategories} from "./transaction.ts";
 
 
 describe("Firestore UserPrefs Tests", () => {
+    test("Category Integrity Test", () => {
+        expect(_.isEqual(new Set(Object.keys(Categories)), TransactionCategories),  "Emoji keys do not match transaction categories").toBeTruthy();
+    });
     test("Read/Write/Default Value Test", async () => {
         const user = { uid: faker.string.alphanumeric(20) }
 

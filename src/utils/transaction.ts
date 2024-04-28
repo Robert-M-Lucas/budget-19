@@ -4,7 +4,27 @@ import {collection,
     where, writeBatch} from "firebase/firestore";
 import {User} from "firebase/auth";
 import {db} from "./firebase.ts";
+import {Categories, goalCategories} from "./user_prefs.ts";
 
+export const TransactionCategories = new Set([
+    "Income",
+    "Transfers",
+    "Shopping",
+    "Groceries",
+    "Entertainment",
+    "Bills",
+    "Personal care",
+    "Eating out",
+    "Gifts",
+    "Family",
+    "Holidays",
+    "Charity",
+    "Expenses",
+    "Finances",
+    "Savings",
+    "Transport",
+    "General"
+]);
 
 export class Transaction {
     private docName?: string;
@@ -54,6 +74,10 @@ export class Transaction {
             throw Error("Doc name is not set!");
         }
         return this.docName;
+    }
+
+    getCategoryCategory(): goalCategories {
+        return Categories[this.category];
     }
 
     // Utility method for creating `Transactions`
