@@ -1,11 +1,12 @@
 import {User} from "firebase/auth";
 import {getTransactions, getTransactionsFilterOrderBy, Transaction} from "./transaction.ts";
 import {where} from "firebase/firestore";
+import {round} from "lodash";
 
 export async function getCurrentBalance(user: User): Promise<number> {
     const transactions = await getTransactions(user);
     const balance = transactions.reduce((sum, transaction) => sum + transaction.amount, 0);
-    return Math.round(balance * 100) / 100;
+    return round(balance, 2);
 }
 
 const MONTH_MILLIS = 2.628e+9;

@@ -10,6 +10,7 @@ import strftime from "strftime";
 
 // CSS
 import "./transactionsTable.scss";
+import {roundFix} from "../../utils/numbers.ts";
 
 export function TransactionPage() {
     const [transactions, setTransactions] = useState<Transaction[] | null>(null);
@@ -23,6 +24,7 @@ export function TransactionPage() {
     if (!authResolved) {
         auth.authStateReady().then(() => setAuthResolved(true));
         return <>
+            <Header/>
             <FullscreenCenter>
                 <div className="text-center">
                     <h1>Waiting for Auth</h1>
@@ -161,13 +163,13 @@ function TransactionItem({data}: { data: Transaction }) {
                 <td>
                     <div className="d-flex justify-content-between align-items-center" style={{color: "green"}}>
                         <span>£</span>
-                        <span>{data.amount.toFixed(2)}</span>
+                        <span>{roundFix(data.amount)}</span>
                     </div>
                 </td> :
                 <td>
                     <div className="d-flex justify-content-between align-items-center" style={{color: "red"}}>
                         <span>£</span>
-                        <span>{data.amount.toFixed(2)}</span>
+                        <span>{roundFix(data.amount)}</span>
                     </div>
                 </td>
             }

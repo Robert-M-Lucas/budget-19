@@ -14,14 +14,17 @@ import {signInWithGoogle} from "../../utils/authentication.ts";
 import totalTile from "./total tile/TotalTile.tsx";
 import {getUserPrefs, UserPrefs} from "../../utils/user_prefs.ts";
 import {User} from "firebase/auth";
-import goalsTile from "./goals tile/GoalsTile.tsx";
+import goalSettingTile from "./goal setting tile/GoalSettingTile.tsx";
 import {RenderTileFunction, TilesContainer} from "react-tiles-dnd";
+import goalTracking from "./goal tracking tile/GoalTrackingTile.tsx";
+import motivationTile from "./motivation tile/MotivationTile.tsx";
+import AddTransactionTile from "./add transaction tile/AddTransactionTile.tsx";
 
 export default function Dashboard() {
     // const [balance, setBalance] = useState(0);
     const [transactionPoints, setPoints] = useState<finalGraphData | null>(null);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [authResolved, setAuthResolved] = useState<Boolean>(false);
+    const [authResolved, setAuthResolved] = useState(false);
     const [userPrefs, setUserPrefs] = useState<UserPrefs | null>(null);
     // const draggable = useRef(true);
     // const [showCSVModal, setShowCSVModal] = useState(false);
@@ -92,7 +95,10 @@ export default function Dashboard() {
 
     const transactionTiles: TileElement[] = [
         TileElement.newTSX(() => totalTile(transactions), 2, 1, columns),
-        TileElement.newTSX(() => (goalsTile(userPrefs, forceUpdate)), 2, 2, columns),
+        TileElement.newTSX(() => (goalSettingTile(userPrefs, forceUpdate)), 2, 2, columns),
+        TileElement.newTSX(() => goalTracking(transactions, userPrefs), 3, 1, columns),
+        TileElement.newTSX(() => motivationTile(transactions, userPrefs), 1, 1, columns),
+        TileElement.newTSX(AddTransactionTile, 1, 1, columns),
         TileElement.newGraph(transactionPoints.raw, 3, 2, columns),
         TileElement.newGraph(transactionPoints.in, 3, 2, columns),
         TileElement.newGraph(transactionPoints.out, 3, 2, columns),

@@ -1,10 +1,10 @@
 import React, {ReactNode, useState} from "react";
 import {setUserPrefs, UserPrefs} from "../../../utils/user_prefs.ts";
 import MultiRangeSlider, {ChangeResult} from "multi-range-slider-react";
-import "./GoalsTile.scss";
+import "./GoalsSettingTile.scss";
 import {auth} from "../../../utils/firebase.ts";
 
-export default function goalsTile(userPrefs: UserPrefs, forceUpdate: () => void): ReactNode {
+export default function goalSettingTile(userPrefs: UserPrefs, forceUpdate: () => void): ReactNode {
     const [minValue, setMinValue] = useState(
         Math.round(userPrefs.getNeedsBudget() * 100)
     );
