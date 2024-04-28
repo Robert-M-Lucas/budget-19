@@ -38,7 +38,7 @@ export default function goalSettingTile(userPrefs: UserPrefs, forceUpdate: () =>
 
     return <>
 
-        <div className={"card-header w-100 fw-bold"}>
+        <div className={"card-header w-100 fw-bold"} onPointerDown={showInfoModal ? stopDragging : undefined}>
             Goals
             <MoreInfo show={showInfoModal} closeModal={onInfoModalClose}/>
             <div>
