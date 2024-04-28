@@ -3,7 +3,7 @@ import {setUserPrefs, UserPrefs} from "../../../utils/user_prefs.ts";
 import MultiRangeSlider, {ChangeResult} from "multi-range-slider-react";
 import "./GoalsSettingTile.scss";
 import {auth} from "../../../utils/firebase.ts";
-import {CSVUpload, stopDragging} from "../../../components/transactions/CSVUpload.tsx";
+import {stopDragging} from "../../../components/transactions/CSVUpload.tsx";
 
 import {MoreInfo} from "../../../components/goals/MoreInfo.tsx";
 
