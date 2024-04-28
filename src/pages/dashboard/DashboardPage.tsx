@@ -28,7 +28,7 @@ export default function Dashboard() {
     const [update, setUpdate] = useState(0)
 
     const fetchTransactions = async (user: User) => {
-        const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "desc"));
+        const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "asc"));
         setTransactions(transactions);
         setPoints(readTransactions(transactions));
     }
@@ -87,9 +87,9 @@ export default function Dashboard() {
     const transactionTiles: TileElement[] = [
         TileElement.newTSX(() => totalTile(transactions), 2, 1, columns),
         TileElement.newTSX(() => (goalsTile(userPrefs)), 2, 1, columns),
-        TileElement.newGraph(transactionPoints.raw, 3, 2, columns),
-        TileElement.newGraph(transactionPoints.in, 3, 2, columns),
-        TileElement.newGraph(transactionPoints.out, 3, 2, columns),
+        TileElement.newGraph(transactionPoints.raw, 4, 2, columns),
+        TileElement.newGraph(transactionPoints.in, 4, 2, columns),
+        TileElement.newGraph(transactionPoints.out, 4, 2, columns),
     ];
 
     const renderTile: RenderTileFunction<typeof transactionTiles[0]> = ({ data, isDragging }) => (
