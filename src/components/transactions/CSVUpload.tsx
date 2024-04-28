@@ -4,7 +4,7 @@ import { Alert, Button, Form, Modal } from "react-bootstrap";
 import { writeNewTransactionsBatched } from "../../utils/transaction.ts";
 import { auth } from "../../utils/firebase";
 
-export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
+export function CSVUpload({ show, closeModal }: { show: boolean, closeModal: () => void }) {
     const [error, setError] = useState<string | null>();
     const [successMsg, setSuccessMsg] = useState<string | null>();
 
@@ -48,7 +48,7 @@ export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dis
         reader.readAsText(file);
     };
 
-    return <Modal show={show} onHide={() => setShow(false)}>
+    return <Modal show={show} onHide={closeModal}>
         <Modal.Header closeButton>
             <Modal.Title>Upload CSV Transactions</Modal.Title>
         </Modal.Header>
@@ -61,7 +61,7 @@ export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dis
             {error && <Alert variant="danger">{error}</Alert>}
         </Modal.Body>
         <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShow(false)}>Close</Button>
+            <Button variant="secondary" onClick={closeModal}>Close</Button>
             <Button variant="primary" onClick={handleUpload}>Upload CSV</Button>
         </Modal.Footer>
     </Modal>
