@@ -1,8 +1,9 @@
-import React, {ReactNode, useState} from "react";
+import {ReactNode, useState} from "react";
 import {setUserPrefs, UserPrefs} from "../../../utils/user_prefs.ts";
 import MultiRangeSlider, {ChangeResult} from "multi-range-slider-react";
 import "./GoalsSettingTile.scss";
 import {auth} from "../../../utils/firebase.ts";
+import { stopDragging } from "../../../components/transactions/CSVUpload.tsx";
 
 export default function goalSettingTile(userPrefs: UserPrefs, forceUpdate: () => void): ReactNode {
     const [minValue, setMinValue] = useState(
@@ -26,11 +27,6 @@ export default function goalSettingTile(userPrefs: UserPrefs, forceUpdate: () =>
         setMinValue(min);
         setMaxValue(max);
     };
-
-    const stop = (e: React.PointerEvent<HTMLDivElement>) => {
-        e.stopPropagation();
-        e.nativeEvent.stopImmediatePropagation();
-    }
 
     return <>
         <div className={"card-header w-100 fw-bold"}>
@@ -63,7 +59,7 @@ export default function goalSettingTile(userPrefs: UserPrefs, forceUpdate: () =>
             </li>
             <li className="list-group-item align-content-stretch" style={{height: "33%"}}>
                 <div className="w-100"
-                     onPointerDown={stop}> {/* THIS LINE TOOK 1.5H */}
+                     onPointerDown={stopDragging}> {/* THIS LINE TOOK 1.5H */}
                     <MultiRangeSlider
                         ruler={false}
                         label={false}
