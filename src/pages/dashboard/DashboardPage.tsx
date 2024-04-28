@@ -19,6 +19,7 @@ import {RenderTileFunction, TilesContainer} from "react-tiles-dnd";
 import goalTracking from "./goal tracking tile/GoalTrackingTile.tsx";
 import motivationTile from "./motivation tile/MotivationTile.tsx";
 import AddTransactionTile from "./add transaction tile/AddTransactionTile.tsx";
+import tipOfTheDayTile from "./tip of the day tile/TipOfTheDayTile.tsx";
 
 export default function Dashboard() {
     // const [balance, setBalance] = useState(0);
@@ -107,6 +108,7 @@ export default function Dashboard() {
     const transactionTiles: TileElement[] = [
         TileElement.newTSX(() => totalTile(transactions), 2, 1, columns),
         TileElement.newTSX(() => (goalSettingTile(userPrefs, forceUpdatePrefs)), 2, 2, columns),
+        TileElement.newTSX(tipOfTheDayTile, 2, 1, columns),
         TileElement.newTSX(() => goalTracking(transactions, userPrefs), 3, 1, columns),
         TileElement.newTSX(() => motivationTile(transactions, userPrefs), 1, 1, columns),
         TileElement.newTSX(() => AddTransactionTile(forceUpdateTransactions), 1, 1, columns),
