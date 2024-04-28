@@ -1,4 +1,7 @@
 {
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "hosting": {
     "public": "dist",
     "ignore": [
@@ -25,7 +28,6 @@
       "port": 9099
     },
     "firestore": {
-      "port": 8080
     }
   }
 }
