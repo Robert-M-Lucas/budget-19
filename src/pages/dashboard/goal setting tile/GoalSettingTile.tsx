@@ -3,7 +3,9 @@ import {setUserPrefs, UserPrefs} from "../../../utils/user_prefs.ts";
 import MultiRangeSlider, {ChangeResult} from "multi-range-slider-react";
 import "./GoalsSettingTile.scss";
 import {auth} from "../../../utils/firebase.ts";
-import { stopDragging } from "../../../components/transactions/CSVUpload.tsx";
+import {stopDragging} from "../../../components/transactions/CSVUpload.tsx";
+
+import {MoreInfo} from "../../../components/goals/MoreInfo.tsx";
 
 export default function goalSettingTile(userPrefs: UserPrefs, forceUpdate: () => void): ReactNode {
     const [minValue, setMinValue] = useState(
@@ -28,10 +30,28 @@ export default function goalSettingTile(userPrefs: UserPrefs, forceUpdate: () =>
         setMaxValue(max);
     };
 
+    const [showInfoModal, setShowInfoModal] = useState(false);
+    function closeModal(setShow: React.Dispatch<React.SetStateAction<boolean>>) {
+        setShow(false);
+    }
+    const onInfoModalClose = () => closeModal(setShowInfoModal)
+
     return <>
-        <div className={"card-header w-100 fw-bold"}>
+
+        <div className={"card-header w-100 fw-bold"} onPointerDown={showInfoModal ? stopDragging : undefined}>
             Goals
+            <MoreInfo show={showInfoModal} closeModal={onInfoModalClose}/>
+            <div>
+                <button className={"btn me-2"} style={{'color': '#55599e', 'position':'relative'}}
+
+                        onClick={() => setShowInfoModal(true)}
+                >
+                      About 50/30/20...
+                </button>
+            </div>
+
         </div>
+
         <ul className="list-group list-group-flush w-100 d-flex card-body p-0">
             <li className="list-group-item align-content-stretch" style={{height: "33%"}}>
                 <div className="row h-100">
