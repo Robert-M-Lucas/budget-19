@@ -63,7 +63,7 @@ export default function Dashboard() {
             }
         }
         // eslint-disable-next-line
-    },[update]);
+    },[auth.currentUser, update]);
 
     if (!authResolved) {
         auth.authStateReady().then(() => setAuthResolved(true));
