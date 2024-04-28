@@ -28,9 +28,6 @@ describe("Firestore UserPrefs Tests", () => {
         // @ts-expect-error
         const read_prefs = await getUserPrefs(user);
 
-        console.log(new_prefs);
-        console.log(read_prefs);
-
-        expect(_.isEqual(read_prefs, prefs), "UserPref changes to be read").toBeTruthy();
+        expect(_.isEqual(read_prefs, new_prefs), "UserPref changes to be read").toBeTruthy();
     });
 });
