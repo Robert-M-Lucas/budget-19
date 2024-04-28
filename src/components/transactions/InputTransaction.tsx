@@ -4,7 +4,7 @@ import { Button, Modal, Form, Alert } from "react-bootstrap";
 import { auth } from "../../utils/firebase";
 import { writeNewTransaction } from "../../utils/transaction.ts";
 
-export function InputTransaction({ show, setShow }: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
+export function InputTransaction({ show, closeModal }: { show: boolean, closeModal: () => void }) {
     const [name, setName] = useState<string>("");
     const [category, setCategory] = useState<string>("Income");
 
@@ -55,7 +55,7 @@ export function InputTransaction({ show, setShow }: { show: boolean, setShow: Re
         setAddress("");
     }
     
-    return <Modal show={show} onHide={() => setShow(false)}>
+    return <Modal show={show} onHide={closeModal}>
         <Modal.Header closeButton>
             <Modal.Title>Add Transaction</Modal.Title>
         </Modal.Header>
@@ -76,7 +76,7 @@ export function InputTransaction({ show, setShow }: { show: boolean, setShow: Re
             {error && <Alert variant="danger">{error}</Alert>}
         </Modal.Body>
         <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShow(false)}>Close</Button>
+            <Button variant="secondary" onClick={closeModal}>Close</Button>
             <Button variant="primary" onClick={addTransaction}>Add Transaction</Button>
         </Modal.Footer>
     </Modal>
