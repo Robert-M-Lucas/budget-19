@@ -59,7 +59,7 @@ function splitTransactions (data: transactionPoint[]): finalGraphData {
         }
     })
     // Splitting the points
-    const splitedData: transactionPoint[][][] = [splitByMonth(data),
+    const splitedData: transactionPoint[][][] = [   splitByMonth(data),
                                                     splitByMonth(moneyIn),
                                                     splitByMonth(moneyOut)]
     const cumulatedSData: transactionPoint[][][] = [cumulateTransactions(splitedData[0]),

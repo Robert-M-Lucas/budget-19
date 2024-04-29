@@ -12,7 +12,6 @@ const customDot = () => {
 
 const goalLine = (data: graphData, referencedData: transactionPoint[]) => {
     const name = data.title;
-
     if (name === "Expenses") {
         return (
             <ReferenceLine label="Goal"
@@ -28,44 +27,6 @@ const goalLine = (data: graphData, referencedData: transactionPoint[]) => {
                                    {
                                        x: referencedData[referencedData.length-1].date,
                                        y: -(referencedData[referencedData.length-1].goal)
-                                   }
-                               ]
-                           }
-            />
-        );
-    } else if (name === "Income") {
-        return (
-            <ReferenceLine label="Goal"
-                           stroke="black"
-                           strokeDasharray="3 3"
-                           segment={
-                               [
-                                   {
-                                       x: referencedData[0].date,
-                                       y: referencedData[0].amount
-                                   },
-                                   {
-                                       x: referencedData[referencedData.length-1].date,
-                                       y: referencedData[referencedData.length-1].goal
-                                   }
-                               ]
-                           }
-            />
-        );
-    } else {
-        return (
-            <ReferenceLine label="Goal"
-                           stroke="black"
-                           strokeDasharray="3 3"
-                           segment={
-                               [
-                                   {
-                                       x: referencedData[0].date,
-                                       y: referencedData[0].amount
-                                   },
-                                   {
-                                       x: referencedData[referencedData.length-1].date,
-                                       y: referencedData[referencedData.length-1].goal
                                    }
                                ]
                            }
