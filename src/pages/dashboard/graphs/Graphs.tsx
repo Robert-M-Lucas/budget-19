@@ -12,18 +12,18 @@ const customDot = () => {
 
 const goalLine = (data: graphData, referencedData: transactionPoint[]) => {
     const name = data.title;
+
     if (name === "Expenses") {
-        console.log(referencedData[0].date, referencedData[0].amount)
-        console.log(referencedData[referencedData.length-1].date, -(referencedData[referencedData.length-1].goal))
         return (
             <ReferenceLine label="Goal"
                            stroke="black"
                            strokeDasharray="3 3"
+                           ifOverflow="extendDomain"
                            segment={
                                [
                                    {
                                        x: referencedData[0].date,
-                                       y: 0
+                                       y: referencedData[0].amount
                                    },
                                    {
                                        x: referencedData[referencedData.length-1].date,
@@ -75,7 +75,16 @@ const goalLine = (data: graphData, referencedData: transactionPoint[]) => {
 }
 
 export default function Graphs({data, index}: Props) {
-    const referenceData = data.points[index]
+    let referenceData = data.points[index]
+
+    if (data.title === "Expenses") {
+        const map = new Map()
+        const total = 0
+        referenceData.forEach((value) => map.set(value.date, total + value.amount))
+        referenceData = []
+        map.forEach((val, key) => referenceData.push({ date: key, amount: val, goal: 800 }))
+    }
+
     return (
         <>
             {data.title}
@@ -84,7 +93,7 @@ export default function Graphs({data, index}: Props) {
                     data={referenceData}
                     margin={{top: 30, right: 50, left: 20, bottom: 5}}
                 >
-                    <XAxis dataKey="date"/>
+                    <XAxis dataKey="date" type="category" />
                     <YAxis/>
                     <Tooltip/>
                     <Line type="monotone" dataKey="amount" stroke="#8884d8" dot={<customDot/>}/>
