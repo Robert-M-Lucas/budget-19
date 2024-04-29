@@ -58,12 +58,12 @@ export class Transaction {
 
     setDate(date?: string) {
         const [day, month, year] = (date || "").split("/").map((n) => Number(n));
-
-        if (isNaN(day) || isNaN(month) || isNaN(year) || day < 1 || day > 31 || month < 1 || month > 12) {
+        
+        this.date = `${year}-${month}-${day}`;
+        
+        if (isNaN(Date.parse(this.date)) || isNaN(day) || isNaN(month) || isNaN(year) || day < 1 || day > 31 || month < 1 || month > 12) {
             this.isValid = false;
             this.invalidField = "date";
-        } else {
-            this.date = `${year}-${month}-${day}`;
         }
         
         return this;
