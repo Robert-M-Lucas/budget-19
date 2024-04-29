@@ -3,6 +3,27 @@ import {User} from "firebase/auth";
 import {db} from "./firebase.ts";
 import {round} from "lodash";
 
+export type goalCategories = "Needs" | "Wants" | "Savings" | "Income";
+
+export const Categories: { [index: string]: goalCategories } = {
+    "Income": "Income",
+    "Transfers": "Wants",
+    "Shopping": "Wants",
+    "Groceries": "Needs",
+    "Entertainment": "Wants",
+    "Bills": "Needs",
+    "Personal care": "Wants",
+    "Eating out": "Wants",
+    "Gifts": "Needs",
+    "Family": "Needs",
+    "Holidays": "Wants",
+    "Charity": "Wants",
+    "Expenses": "Needs",
+    "Finances": "Needs",
+    "Savings": "Savings",
+    "Transport": "Needs",
+    "General": "Wants"
+};
 
 export class UserPrefs {
     private readonly needsBudget: number;
@@ -21,13 +42,13 @@ export class UserPrefs {
         this.wantsBudget = round(wantsBudget, 2);
     }
 
-    static newChecked(needsBudget: number, wantsBudget: number): UserPrefs | Error {
+    static newChecked(needsBudget: number, wantsBudget: number): UserPrefs {
         if (needsBudget > 1) {
-            return new Error("needsBudget > 1!");
+            throw new Error("needsBudget > 1!");
         }
 
         if (needsBudget + wantsBudget > 1) {
-            return new Error("needsBudget + wantsBudget > 1!");
+            throw new Error("needsBudget + wantsBudget > 1!");
         }
 
         return new UserPrefs(needsBudget, wantsBudget);

@@ -1,4 +1,5 @@
-import { Transaction as TransactionDocument } from "../../utils/transaction.ts";
+import {Transaction as TransactionDocument, TransactionCategories} from "../../utils/transaction.ts";
+import strftime from "strftime";
 
 export const emojis: { [index: string]: string } = {
     "Income": "💸",
@@ -20,7 +21,6 @@ export const emojis: { [index: string]: string } = {
     "General": "🎒"
 }
 
-export const categories = new Set(Object.keys(emojis));
 
 export class Transaction {
     isValid: boolean;
@@ -100,7 +100,7 @@ export class Transaction {
     }
 
     setCategory(category?: string) {
-        if (!this.isNotEmpty(category) || !categories.has(category)) {
+        if (!this.isNotEmpty(category) || !TransactionCategories.has(category)) {
             this.isValid = false;
             this.invalidField = "category";
         } else {
@@ -173,13 +173,9 @@ export class Transaction {
 // utility functions for transactions
 
 export function formatDate(date: Date):string {
-    return `${padding(date.getDate())}/${padding(date.getMonth()+1)}/${date.getFullYear()}`;
+    return strftime("%d/%m/%Y", date);
 }
 
 export function formatTime(date: Date):string {
-    return `${padding(date.getHours())}:${padding(date.getMinutes())}:${padding(date.getSeconds())}`;
-}
-
-function padding(n: number): string {
-    return n.toString().padStart(2, "0");
+    return strftime("%H:%M:%S", date);
 }

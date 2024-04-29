@@ -4,7 +4,7 @@ import { Button, Modal, Form, Alert } from "react-bootstrap";
 import { auth } from "../../utils/firebase";
 import { writeNewTransaction } from "../../utils/transaction.ts";
 
-export function InputTransaction({ show, setShow }: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
+export function InputTransaction({ show, closeModal }: { show: boolean, closeModal: (added: boolean) => void }) {
     const [name, setName] = useState<string>("");
     const [category, setCategory] = useState<string>("Income");
 
@@ -16,6 +16,8 @@ export function InputTransaction({ show, setShow }: { show: boolean, setShow: Re
 
     const [error, setError] = useState<string | null>("");
     const [successMsg, setSuccessMsg] = useState<string | null>("");
+
+    const [added, setAdded] = useState<boolean>(false);
 
     async function addTransaction() {
         setError(null);
@@ -53,9 +55,11 @@ export function InputTransaction({ show, setShow }: { show: boolean, setShow: Re
         setDescription("");
         setNotes("");
         setAddress("");
+
+        setAdded(true);
     }
     
-    return <Modal show={show} onHide={() => setShow(false)}>
+    return <Modal show={show} onHide={() => closeModal(added)}>
         <Modal.Header closeButton>
             <Modal.Title>Add Transaction</Modal.Title>
         </Modal.Header>
@@ -76,7 +80,7 @@ export function InputTransaction({ show, setShow }: { show: boolean, setShow: Re
             {error && <Alert variant="danger">{error}</Alert>}
         </Modal.Body>
         <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShow(false)}>Close</Button>
+            <Button variant="secondary" onClick={() => closeModal(added)}>Close</Button>
             <Button variant="primary" onClick={addTransaction}>Add Transaction</Button>
         </Modal.Footer>
     </Modal>

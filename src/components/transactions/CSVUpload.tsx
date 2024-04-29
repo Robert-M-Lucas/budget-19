@@ -4,9 +4,16 @@ import { Alert, Button, Form, Modal } from "react-bootstrap";
 import { writeNewTransactionsBatched } from "../../utils/transaction.ts";
 import { auth } from "../../utils/firebase";
 
-export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
+export function stopDragging(e: React.PointerEvent<HTMLDivElement>) {
+    e.stopPropagation();
+    e.nativeEvent.stopImmediatePropagation();
+}
+
+export function CSVUpload({ show, closeModal }: { show: boolean, closeModal: (added: boolean) => void }) {
     const [error, setError] = useState<string | null>();
     const [successMsg, setSuccessMsg] = useState<string | null>();
+
+    const [added, setAdded] = useState<boolean>(false);
 
     const reader = new FileReader();
 
@@ -43,12 +50,13 @@ export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dis
             setTimeout(() => setSuccessMsg(null), 10000);
 
             fileElement.value = "";
+            setAdded(true);
         };
 
         reader.readAsText(file);
     };
 
-    return <Modal show={show} onHide={() => setShow(false)}>
+    return <Modal show={show} onHide={() => closeModal(added)}>
         <Modal.Header closeButton>
             <Modal.Title>Upload CSV Transactions</Modal.Title>
         </Modal.Header>
@@ -61,7 +69,7 @@ export function CSVUpload({ show, setShow }: { show: boolean, setShow: React.Dis
             {error && <Alert variant="danger">{error}</Alert>}
         </Modal.Body>
         <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShow(false)}>Close</Button>
+            <Button variant="secondary" onClick={() => closeModal(added)}>Close</Button>
             <Button variant="primary" onClick={handleUpload}>Upload CSV</Button>
         </Modal.Footer>
     </Modal>

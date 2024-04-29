@@ -23,13 +23,12 @@ export default function Dashboard() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [authResolved, setAuthResolved] = useState(false);
     const [userPrefs, setUserPrefs] = useState<UserPrefs | null>(null);
-    const [index, setIndex] = useState(0);
     // const [showCSVModal, setShowCSVModal] = useState(false);
     // const [showTransactionModal, setShowTransactionModal] = useState(false);
     const [update, setUpdate] = useState(0)
 
     const fetchTransactions = async (user: User) => {
-        const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "asc"));
+        const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "desc"));
         setTransactions(transactions);
         setPoints(readTransactions(transactions));
     }
@@ -87,30 +86,24 @@ export default function Dashboard() {
 
     const transactionTiles: TileElement[] = [
         TileElement.newTSX(() => totalTile(transactions), 2, 1, columns),
-        TileElement.newTSX(() => goalsTile(userPrefs), 2, 1, columns),
-        TileElement.newGraph((transactionPoints.raw), 4, 2, columns),
-        TileElement.newGraph((transactionPoints.in), 4, 2, columns),
-        TileElement.newGraph((transactionPoints.out), 4, 2, columns),
+        TileElement.newTSX(() => (goalsTile(userPrefs)), 2, 1, columns),
+        TileElement.newGraph(transactionPoints.raw, 3, 2, columns),
+        TileElement.newGraph(transactionPoints.in, 3, 2, columns),
+        TileElement.newGraph(transactionPoints.out, 3, 2, columns),
     ];
 
     const renderTile: RenderTileFunction<typeof transactionTiles[0]> = ({ data, isDragging }) => (
         <div style={{padding: ".75rem", width: "100%"}}>
             <div className={`tile card ${isDragging ? "dragging" : ""}`}
                  style={{width: "100%", height: "100%"}}>
-                {data.isGraph() ? <Graphs data={data.forceGetGraph()} index={index}/> : data.forceGetTSX()()}
+                {data.isGraph() ? <Graphs data={data.forceGetGraph()}/> : data.forceGetTSX()()}
             </div>
         </div>
     );
 
-    const handleOnToggleMonth = () => {
-        const newIndex = (index + 1) % transactionPoints.raw.points.length
-        setIndex(newIndex)
-    }
-
     return (
         <div className="vh-100 d-flex flex-column">
             <Header/>
-            <button onClick={handleOnToggleMonth}>Toggle Month</button>
             <div className="App ps-5 pe-5 mt-3">
                 <TilesContainer
                     data={transactionTiles}
