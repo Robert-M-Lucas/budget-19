@@ -32,18 +32,16 @@ const splitByMonth = (points: transactionPoint[]): transactionPoint[][] => {
 }
 
 function cumulateTransactions(points: transactionPoint[][]): transactionPoint[][] {
-    points.map(month => {
+    return points.map(month => {
         let total = 0;
         return month.map(t => {
             total += t.amount;
             return {
-                date: t.date,
-                amount: total,
-                goal: t.goal
+                ...t,
+                amount: total
             };
         })
     })
-    return points
 }
 
 function getDateString(timestamp: number): string  {
@@ -61,13 +59,12 @@ function splitTransactions (data: transactionPoint[]): finalGraphData {
         }
     })
     // Splitting the points
-    const splitedData: transactionPoint[][][] = [splitByMonth(data), splitByMonth(moneyIn), splitByMonth(moneyOut)]
+    const splitedData: transactionPoint[][][] = [splitByMonth(data),
+                                                    splitByMonth(moneyIn),
+                                                    splitByMonth(moneyOut)]
     const cumulatedSData: transactionPoint[][][] = [cumulateTransactions(splitedData[0]),
                                                     cumulateTransactions(splitedData[1]),
-                                                    cumulateTransactions(splitedData[2])
-                                                ]
-    console.log(splitedData)
-    console.log(cumulatedSData)
+                                                    cumulateTransactions(splitedData[2])]
     return {raw: {points: cumulatedSData[0], title: "Balance"},
             in: {points: cumulatedSData[1], title: "Income"},
             out: {points: cumulatedSData[2], title: "Expenses"}};
