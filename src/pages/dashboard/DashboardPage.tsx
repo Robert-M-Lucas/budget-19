@@ -20,6 +20,12 @@ import goalTracking from "./goal tracking tile/GoalTrackingTile.tsx";
 import motivationTile from "./motivation tile/MotivationTile.tsx";
 import AddTransactionTile from "./add transaction tile/AddTransactionTile.tsx";
 import tipOfTheDayTile from "./tip of the day tile/TipOfTheDayTile.tsx";
+import savingsGraphTile from "./graph tiles/SavingsGraphTile.tsx";
+import needsGraphTile from "./graph tiles/NeedsGraphTile.tsx";
+import wantsGraphTile from "./graph tiles/WantsGraphTile.tsx";
+import balanceGraphTile from "./graph tiles/BalanceGraphTile.tsx";
+import incomeGraphTile from "./graph tiles/IncomeGraphTile.tsx";
+import expenseGraphTile from "./graph tiles/ExpenseGraphTile.tsx";
 
 export default function Dashboard() {
     // const [balance, setBalance] = useState(0);
@@ -109,12 +115,18 @@ export default function Dashboard() {
         TileElement.newTSX(() => totalTile(transactions), 2, 1, columns),
         TileElement.newTSX(() => (goalSettingTile(userPrefs, forceUpdatePrefs)), 2, 2, columns),
         TileElement.newTSX(tipOfTheDayTile, 2, 1, columns),
+        TileElement.newTSX(() => savingsGraphTile(transactions, userPrefs), 3, 2, columns),
+        TileElement.newTSX(() => needsGraphTile(transactions, userPrefs), 3, 2, columns),
+        TileElement.newTSX(() => wantsGraphTile(transactions, userPrefs), 3, 2, columns),
+        TileElement.newTSX(() => balanceGraphTile(transactions), 3, 2, columns),
+        TileElement.newTSX(() => incomeGraphTile(transactions), 3, 2, columns),
+        TileElement.newTSX(() => expenseGraphTile(transactions), 3, 2, columns),
         TileElement.newTSX(() => goalTracking(transactions, userPrefs), 3, 1, columns),
         TileElement.newTSX(() => motivationTile(transactions, userPrefs), 1, 1, columns),
         TileElement.newTSX(() => AddTransactionTile(forceUpdateTransactions), 1, 1, columns),
-        TileElement.newGraph(transactionPoints.raw, 3, 2, columns),
-        TileElement.newGraph(transactionPoints.in, 3, 2, columns),
-        TileElement.newGraph(transactionPoints.out, 3, 2, columns),
+        // TileElement.newGraph(transactionPoints.raw, 3, 2, columns),
+        // TileElement.newGraph(transactionPoints.in, 3, 2, columns),
+        // TileElement.newGraph(transactionPoints.out, 3, 2, columns),
     ];
 
     const renderTile: RenderTileFunction<TileElement> = ({ data, isDragging }) => (
