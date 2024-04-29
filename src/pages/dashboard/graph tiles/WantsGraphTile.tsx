@@ -74,7 +74,7 @@ export default function wantsGraphTile(transactions: Transaction[], userPrefs: U
                 <YAxis/>
                 <Tooltip/>
                 <Line type="monotone" dataKey="amount" stroke="#8884d8" dot={false}/>
-                <Line type="monotone" dataKey="goal" stroke="rgb(202, 15, 15)" dot={false}/>
+                <Line type="monotone" dataKey="goal" stroke="rgb(202, 15, 15)" dot={false} strokeDasharray="5 5"/>
             </LineChart>
         </ResponsiveContainer>
     </>;

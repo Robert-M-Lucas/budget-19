@@ -76,7 +76,7 @@ export default function savingsGraphTile(transactions: Transaction[], userPrefs:
                 <YAxis/>
                 <Tooltip/>
                 <Line type="monotone" dataKey="amount" stroke="#8884d8" dot={false}/>
-                <Line type="monotone" dataKey="goal" stroke="green" dot={false}/>
+                <Line type="monotone" dataKey="goal" stroke="green" dot={false} strokeDasharray="5 5"/>
             </LineChart>
         </ResponsiveContainer>
     </>;
