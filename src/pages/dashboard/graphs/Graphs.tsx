@@ -79,8 +79,7 @@ export default function Graphs({data, index}: Props) {
 
     if (data.title === "Expenses") {
         const map = new Map()
-        const total = 0
-        referenceData.forEach((value) => map.set(value.date, total + value.amount))
+        referenceData.forEach((value) => map.set(value.date, value.amount))
         referenceData = []
         map.forEach((val, key) => referenceData.push({ date: key, amount: val, goal: 800 }))
     }
