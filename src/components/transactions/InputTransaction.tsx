@@ -14,6 +14,9 @@ export function InputTransaction({ show, closeModal }: { show: boolean, closeMod
     const [notes, setNotes] = useState<string>("");
     const [address, setAddress] = useState<string>("");
 
+    const [date, setDate] = useState<string>("");
+    const [time, setTime] = useState<string>("");
+
     const [error, setError] = useState<string | null>("");
     const [successMsg, setSuccessMsg] = useState<string | null>("");
 
@@ -24,12 +27,14 @@ export function InputTransaction({ show, closeModal }: { show: boolean, closeMod
         setSuccessMsg(null);
 
         if (!auth.currentUser) return setError("You are not signed in");
-        
-        const date = new Date();
 
-        const transaction = new Transaction()
-            .setDate(formatDate(date))
-            .setTime(formatTime(date))
+        let curTime = time;
+        if (date.trim() !== "" && curTime.trim() === "") curTime = "00:00:00"
+        else if (curTime.trim() === "") curTime = formatTime(new Date())
+
+            const transaction = new Transaction()
+            .setDate(date.trim() === "" ? formatDate(new Date()) : date)
+            .setTime(curTime)
             .setName(name)
             .setEmoji(category ? emojis[category] : undefined)
             .setCategory(category)
@@ -55,6 +60,8 @@ export function InputTransaction({ show, closeModal }: { show: boolean, closeMod
         setDescription("");
         setNotes("");
         setAddress("");
+        setDate("");
+        setTime("");
 
         setAdded(true);
     }
@@ -70,6 +77,9 @@ export function InputTransaction({ show, closeModal }: { show: boolean, closeMod
                 <Form.Select onChange={(e) => setCategory(e.target.value)}>
                     {Object.entries(emojis).map(([category, emoji], i) => <option value={category} key={i}>{emoji} {category}</option>)}
                 </Form.Select>
+
+                <Form.Control type="name" placeholder="Enter date (DD/MM/YYYY) (optional)" value={date} onChange={(e) => setDate(e.target.value)} />
+                <Form.Control type="name" placeholder="Enter time (HH:MM:SS) (optional)" value={time} onChange={(e) => setTime(e.target.value)} />
 
                 <Form.Control as="textarea" rows={3} placeholder="Enter Description (optional)" onChange={(e) => setDescription(e.target.value)} />
                 <Form.Control as="textarea" rows={3} placeholder="Enter Notes (optional)" onChange={(e) => setNotes(e.target.value)} />
