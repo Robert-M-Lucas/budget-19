@@ -1,6 +1,5 @@
 import "./styles.css";
 import "react-tiles-dnd/esm/index.css";
-import { TilesContainer, RenderTileFunction } from "react-tiles-dnd";
 import useWindowDimensions from "../../hooks/WindowDimensionsHook.tsx";
 import {Header} from "../../components/Header.tsx";
 import {useEffect, useState} from "react";
@@ -8,17 +7,21 @@ import {Transaction, getTransactionsFilterOrderBy } from "../../utils/transactio
 import {auth} from "../../utils/firebase.ts";
 import {orderBy} from "firebase/firestore";
 import {FullscreenCenter} from "../../components/FullscreenCenter.tsx";
-import Graphs from "./Graphs.tsx"
+import Graphs from "./graphs/Graphs.tsx"
 import {getTileSize, TileElement} from "./TileUtils.ts";
-import {finalGraphData, readTransactions} from "./GraphUtils.ts";
+import {finalGraphData, readTransactions} from "./graphs/GraphUtils.ts";
 import {signInWithGoogle} from "../../utils/authentication.ts";
-import totalTile from "./TotalTile.tsx";
+import totalTile from "./total tile/TotalTile.tsx";
 import {getUserPrefs, UserPrefs} from "../../utils/user_prefs.ts";
 import {User} from "firebase/auth";
-import goalsTile from "./GoalsTile.tsx";
+import goalSettingTile from "./goal setting tile/GoalSettingTile.tsx";
+import {RenderTileFunction, TilesContainer} from "react-tiles-dnd";
+import goalTracking from "./goal tracking tile/GoalTrackingTile.tsx";
+import motivationTile from "./motivation tile/MotivationTile.tsx";
+import AddTransactionTile from "./add transaction tile/AddTransactionTile.tsx";
+import tipOfTheDayTile from "./tip of the day tile/TipOfTheDayTile.tsx";
 
 export default function Dashboard() {
-    // const [balance, setBalance] = useState(0);
     const [transactionPoints, setPoints] = useState<finalGraphData | null>(null);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [authResolved, setAuthResolved] = useState(false);
@@ -26,9 +29,21 @@ export default function Dashboard() {
     // const [showCSVModal, setShowCSVModal] = useState(false);
     // const [showTransactionModal, setShowTransactionModal] = useState(false);
     const [update, setUpdate] = useState(0)
+    const [index, setIndex] = useState(0);
+
+    const forceUpdatePrefs = () => {
+        setUpdate(update + 1);
+        setUserPrefs(null);
+    };
+
+    const forceUpdateTransactions = () => {
+        setUpdate(update + 1);
+        setPoints(null);
+        setTransactions([]);
+    };
 
     const fetchTransactions = async (user: User) => {
-        const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "desc"));
+        const transactions = await getTransactionsFilterOrderBy(user, orderBy("dateTime", "asc"));
         setTransactions(transactions);
         setPoints(readTransactions(transactions));
     }
@@ -39,10 +54,15 @@ export default function Dashboard() {
     // Transaction Loading and Handling
     useEffect(() => {
         if (auth.currentUser !== null) {
-            fetchTransactions(auth.currentUser).then();
-            getUserPrefs(auth.currentUser).then((prefs) => setUserPrefs(prefs));
+            if (transactionPoints === null) {
+                fetchTransactions(auth.currentUser).then();
+            }
+            if (userPrefs === null) {
+                getUserPrefs(auth.currentUser).then((prefs) => setUserPrefs(prefs));
+            }
         }
-    },[auth.currentUser])
+        // eslint-disable-next-line
+    },[auth.currentUser, update]);
 
     if (!authResolved) {
         auth.authStateReady().then(() => setAuthResolved(true));
@@ -86,24 +106,34 @@ export default function Dashboard() {
 
     const transactionTiles: TileElement[] = [
         TileElement.newTSX(() => totalTile(transactions), 2, 1, columns),
-        TileElement.newTSX(() => (goalsTile(userPrefs)), 2, 1, columns),
-        TileElement.newGraph(transactionPoints.raw, 3, 2, columns),
-        TileElement.newGraph(transactionPoints.in, 3, 2, columns),
-        TileElement.newGraph(transactionPoints.out, 3, 2, columns),
+        TileElement.newTSX(() => (goalSettingTile(userPrefs, forceUpdatePrefs)), 2, 2, columns),
+        TileElement.newTSX(tipOfTheDayTile, 2, 1, columns),
+        TileElement.newTSX(() => goalTracking(transactions, userPrefs), 3, 1, columns),
+        TileElement.newTSX(() => motivationTile(transactions, userPrefs), 1, 1, columns),
+        TileElement.newTSX(() => AddTransactionTile(forceUpdateTransactions), 1, 1, columns),
+        TileElement.newGraph(transactionPoints.raw, 4, 2, columns),
+        TileElement.newGraph(transactionPoints.in, 4, 2, columns),
+        TileElement.newGraph(transactionPoints.out, 4, 2, columns),
     ];
 
     const renderTile: RenderTileFunction<typeof transactionTiles[0]> = ({ data, isDragging }) => (
         <div style={{padding: ".75rem", width: "100%"}}>
             <div className={`tile card ${isDragging ? "dragging" : ""}`}
                  style={{width: "100%", height: "100%"}}>
-                {data.isGraph() ? <Graphs data={data.forceGetGraph()}/> : data.forceGetTSX()()}
+                {data.isGraph() ? <Graphs data={data.forceGetGraph()} index={index}/> : data.forceGetTSX()()}
             </div>
         </div>
     );
 
+    const handleOnToggleMonth = () => {
+        const newIndex = (index + 1) % transactionPoints.raw.points.length
+        setIndex(newIndex)
+    }
+
     return (
         <div className="vh-100 d-flex flex-column">
             <Header/>
+            <button onClick={handleOnToggleMonth}>Toggle Month</button>
             <div className="App ps-5 pe-5 mt-3">
                 <TilesContainer
                     data={transactionTiles}

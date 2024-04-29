@@ -1,4 +1,4 @@
-import {Transaction} from "../../utils/transaction.ts";
+import {Transaction} from "../../../utils/transaction.ts";
 import strftime from "strftime";
 
 export type transactionPoint = { date: string; amount: number; goal: number }
