@@ -1,7 +1,10 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import {connectAuthEmulator, getAuth } from "firebase/auth";
-import {connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import {FirebaseApp, initializeApp } from "firebase/app";
+import {Auth, connectAuthEmulator, getAuth } from "firebase/auth";
+import {Firestore, connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+import firebase from "firebase/compat";
 
 // Your web app's Firebase configuration
 export const firebaseConfig = {
@@ -14,15 +17,38 @@ export const firebaseConfig = {
     measurementId: "G-QF0Z0VGCJ0"
 };
 
-// Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-// export const analytics = getAnalytics(app);
-export const auth = getAuth(app); // Initialize Firebase Authentication
-export const db = getFirestore(app);
-
-if (import.meta.env.DEV) {
-    console.log("Connecting to emulators");
-    connectAuthEmulator(auth, "http://localhost:9099");
-    connectFirestoreEmulator(db, "localhost", 8080);
+let _app = undefined;
+let _auth = undefined;
+let _db = undefined;
+if (import.meta.env.MODE === "test") {
+    //
 }
+else if (import.meta.env.DEV) {
+    // Initialize Firebase
+    _app = initializeApp(firebaseConfig);
+    // export const analytics = getAnalytics(app);
+    _auth = getAuth(_app); // Initialize Firebase Authentication
+    _db = getFirestore(_app);
+    console.log("Connecting to emulators");
+    connectAuthEmulator(_auth, "http://localhost:9099");
+    connectFirestoreEmulator(_db, "localhost", 8080);
+}
+else {
+    // Initialize Firebase
+    _app = initializeApp(firebaseConfig);
+    // export const analytics = getAnalytics(app);
+    _auth = getAuth(_app); // Initialize Firebase Authentication
+    _db = getFirestore(_app);
+}
+
+export const app: FirebaseApp = _app!;
+export const auth: Auth = _auth!;
+export let db: Firestore = _db!;
+
+export function setTestDBContext(context: Firestore | firebase.firestore.Firestore) {
+    if (import.meta.env.MODE === "test") {
+        db = context;
+    }
+}
+
 
