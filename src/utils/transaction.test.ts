@@ -12,6 +12,8 @@ import _ from "lodash";
 import { describe, expect, test } from "vitest";
 import {where} from "firebase/firestore";
 import {emojis} from "../components/transactions/Transaction.ts";
+import {getTestEnv} from "./firestore.test.ts";
+import {setTestDBContext} from "./firebase.ts";
 
 function fakeTransaction(uid: string, name?: string): Transaction {
     return new Transaction(
@@ -33,29 +35,37 @@ describe("Firestore Transaction Tests", () => {
         expect(_.isEqual(new Set(Object.keys(emojis)), TransactionCategories),  "Emoji keys do not match transaction categories").toBeTruthy();
     });
     test("Write/Read Test", async () => {
-        const user = { uid: "sample_uid" }
-
+        const t = await getTestEnv();
+        const user = {uid: "sample_user"};
+        const context = t.authenticatedContext(user.uid);
+        setTestDBContext(context.firestore());
+        
         const new_transaction = fakeTransaction(user.uid);
 
-        expect(new_transaction.getDocName(), "New transaction has no docName").toBe(undefined);
+        expect(new_transaction.getDocName(), "New transaction has docName").toBe(undefined);
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         const written_transaction = await writeNewTransaction(user, new_transaction);
 
-        expect(written_transaction.getDocName(), "Written transaction has docName").toBeDefined();
+        expect(written_transaction.getDocName(), "Written transaction has no docName").toBeDefined();
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         const fetched_transaction = await getTransactionsByDocName(user, written_transaction.forceGetDocName());
 
-        expect(fetched_transaction, "Written transaction can be fetched").toBeDefined();
+        expect(fetched_transaction, "Written transaction can't be fetched").toBeDefined();
 
-        expect(_.isEqual(written_transaction, fetched_transaction), "Fetched transaction matches written transaction").toBeTruthy();
+        expect(_.isEqual(written_transaction, fetched_transaction), "Fetched transaction doesn't match written transaction").toBeTruthy();
+
+        await t.cleanup();
     });
 
     test("Write/Read Batch Test", async () => {
-        const user = { uid: "sample_uid" }
+        const t = await getTestEnv();
+        const user = {uid: "sample_user"};
+        const context = t.authenticatedContext(user.uid);
+        setTestDBContext(context.firestore());
 
         const transaction_name = faker.string.alphanumeric(20);
 
@@ -84,11 +94,16 @@ describe("Firestore Transaction Tests", () => {
             .sort((a, b) => parseInt(a.description) - parseInt(b.description));
         sorted_transactions.forEach((t, i) => t.setDocName(sorted_fetched_transactions[i].forceGetDocName()));
 
-        expect(_.isEqual(sorted_transactions, sorted_fetched_transactions), "Written transactions fetched").toBeTruthy();
+        expect(_.isEqual(sorted_transactions, sorted_fetched_transactions), "Written transactions not fetched").toBeTruthy();
+
+        await t.cleanup();
     }, 10_000);
 
     test("Read All Test", async () => {
-        const user = { uid: "sample_uid" }
+        const t = await getTestEnv();
+        const user = {uid: "sample_user"};
+        const context = t.authenticatedContext(user.uid);
+        setTestDBContext(context.firestore());
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
@@ -108,12 +123,15 @@ describe("Firestore Transaction Tests", () => {
 
         expect(
             updated_transactions.reduce((curr, el) => curr || _.isEqual(el, new_transaction), false)
-        , "Written transaction fetched").toBeTruthy();
-
+        , "Written transaction not fetched").toBeTruthy();
+        await t.cleanup();
     }, 10_000);
 
     test("Delete Test", async () => {
-        const user = { uid: "sample_uid" }
+        const t = await getTestEnv();
+        const user = {uid: "sample_user"};
+        const context = t.authenticatedContext(user.uid);
+        setTestDBContext(context.firestore());
 
         const transaction_name = faker.string.alphanumeric(20);
         
@@ -124,18 +142,23 @@ describe("Firestore Transaction Tests", () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         expect((await getTransactionsFilterOrderBy(user, where("name", "==", transaction_name))).length
-        , "New transaction to be present").toBe(1);
+        , "New transaction not present").toBe(1);
         
         await deleteTransaction(transaction.forceGetDocName());
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         expect((await getTransactionsFilterOrderBy(user, where("name", "==", transaction_name))).length
-        , "Transaction to be deleted").toBe(0);
+        , "Transaction not deleted").toBe(0);
+
+        await t.cleanup();
     });
     
     test("Overwrite Batch Test", async () => {
-        const user = { uid: "sample_uid" }
+        const t = await getTestEnv();
+        const user = {uid: "sample_user"};
+        const context = t.authenticatedContext(user.uid);
+        setTestDBContext(context.firestore());
 
         const transactions = [];
         
@@ -153,7 +176,7 @@ describe("Firestore Transaction Tests", () => {
         // @ts-expect-error
         const transactions_with_doc = await getTransactionsFilterOrderBy(user, where("name", "==", transaction_name));
         
-        expect(transactions_with_doc.length, "Transactions written").toBe(transactions.length);
+        expect(transactions_with_doc.length, "Transactions not written").toBe(transactions.length);
         
         const new_transaction_name = faker.string.alphanumeric(20);
         
@@ -168,10 +191,15 @@ describe("Firestore Transaction Tests", () => {
         const overwritten_transactions = await getTransactionsFilterOrderBy(user, where("name", "==", new_transaction_name));
 
         expect(overwritten_transactions.reduce((curr, t) => curr && (t.name == new_transaction_name), true)).toBeTruthy();
+
+        await t.cleanup();
     }, 20_000);
 
     test("Overwrite Test", async () => {
-        const user = { uid: "sample_uid" }
+        const t = await getTestEnv();
+        const user = {uid: "sample_user"};
+        const context = t.authenticatedContext(user.uid);
+        setTestDBContext(context.firestore());
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
@@ -185,14 +213,16 @@ describe("Firestore Transaction Tests", () => {
         // @ts-expect-error
         const overwritten_transaction = await overwriteTransaction(user, transaction.forceGetDocName(), transaction);
 
-        expect(overwritten_transaction.getDocName(), "Overwritten transaction to have the same docName").toBe(transaction.forceGetDocName());
+        expect(overwritten_transaction.getDocName(), "Overwritten transaction doesn't have the same docName").toBe(transaction.forceGetDocName());
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         const read_transaction = await getTransactionsByDocName(user, transaction.forceGetDocName());
 
-        expect(read_transaction, "Overwritten transaction to exist").toBeDefined();
+        expect(read_transaction, "Overwritten transaction doesn't exist").toBeDefined();
 
-        expect(read_transaction!.name, "Overwritten changes to be present").toBe(new_name);
+        expect(read_transaction!.name, "Overwritten changes aren't present").toBe(new_name);
+
+        await t.cleanup();
     });
 });

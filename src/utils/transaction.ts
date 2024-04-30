@@ -1,7 +1,9 @@
-import {collection,
+import {
+    collection,
     deleteDoc, doc, DocumentSnapshot, getDoc, getDocs, query,
     QueryConstraint, setDoc, SnapshotOptions,
-    where, writeBatch} from "firebase/firestore";
+    where, writeBatch
+} from "firebase/firestore";
 import {User} from "firebase/auth";
 import {db} from "./firebase.ts";
 import {Categories, goalCategories} from "./user_prefs.ts";
@@ -100,7 +102,7 @@ export class Transaction {
     }
 }
 
-// ! This is set by Firebase - do not change!
+// ! This is set by Firestore - do not change!
 const MAX_BATCH_SIZE = 500;
 
 // Returns all transactions for the given `user` with the `docName` attribute set
