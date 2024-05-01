@@ -73,7 +73,7 @@ export function InputTransaction({ show, closeModal }: { show: boolean, closeMod
         <Modal.Body>
             <Form>
                 <Form.Control type="name" placeholder="Enter name" value={name} onChange={(e) => setName(e.target.value)} />
-                <Form.Control type="name" placeholder="Enter amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
+                <Form.Control type="name" placeholder="Enter amount (use '-' for expenses, do not include currency)" value={amount} onChange={(e) => setAmount(e.target.value)} />
                 <Form.Select onChange={(e) => setCategory(e.target.value)}>
                     {Object.entries(emojis).map(([category, emoji], i) => <option value={category} key={i}>{emoji} {category}</option>)}
                 </Form.Select>
@@ -83,7 +83,7 @@ export function InputTransaction({ show, closeModal }: { show: boolean, closeMod
 
                 <Form.Control as="textarea" rows={3} placeholder="Enter Description (optional)" onChange={(e) => setDescription(e.target.value)} />
                 <Form.Control as="textarea" rows={3} placeholder="Enter Notes (optional)" onChange={(e) => setNotes(e.target.value)} />
-                <Form.Control as="textarea" rows={3} placeholder="Enter Address (optional)"onChange={(e) => setAddress(e.target.value)} />
+                <Form.Control as="textarea" rows={3} placeholder="Enter Address (optional)" onChange={(e) => setAddress(e.target.value)} />
             </Form>
 
             {successMsg && <Alert variant="success">{successMsg}</Alert>}
