@@ -181,7 +181,7 @@ export async function overwriteTransaction(user: User, docName: string, transact
 
 //  Writes a batch of transactions to Firestore
 export async function writeNewTransactionsBatched(user: User, transactions: Transaction[]): Promise<void> {
-    for (let i = 0; i < transactions.length; i+=500) {
+    for (let i = 0; i < transactions.length; i += MAX_BATCH_SIZE) {
         const batch = writeBatch(db);
         const chunk = transactions.slice(i, i + MAX_BATCH_SIZE);
         chunk.forEach((transaction) => {
@@ -198,14 +198,14 @@ export async function writeNewTransactionsBatched(user: User, transactions: Tran
 
 //  Overwrites a batch of existing transactions in Firestore
 export async function overwriteTransactionsBatched(user: User, docName: string[], transactions: Transaction[]): Promise<void> {
-    for (let i = 0; i < transactions.length; i += 500) {
+    for (let i = 0; i < transactions.length; i += MAX_BATCH_SIZE) {
         const batch = writeBatch(db);
         const chunk = transactions.slice(i, i + MAX_BATCH_SIZE);
-        chunk.forEach((transaction) => {
+        chunk.forEach((transaction, j) => {
             if (user.uid != transaction.uid) {
                 throw Error(`Current user is '${user.uid}' however transaction is '${transaction.uid}'`);
             }
-            const newTransactionRef = doc(collection(db, "Transactions"), docName[i]);
+            const newTransactionRef = doc(collection(db, "Transactions"), docName[i + j]);
             batch.set(newTransactionRef, transaction.toSendObject());
         });
 
