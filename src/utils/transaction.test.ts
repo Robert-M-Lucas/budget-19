@@ -185,12 +185,17 @@ describe("Firestore Transaction Tests", () => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         await overwriteTransactionsBatched(user, transactions_with_doc.map((t) => t.forceGetDocName()), transactions_with_doc);
-        
+
+        const sleep = (milliseconds: number) => {
+            return new Promise(resolve => setTimeout(resolve, milliseconds))
+        };
+        await sleep(1000);
+
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         const overwritten_transactions = await getTransactionsFilterOrderBy(user, where("name", "==", new_transaction_name));
 
-        expect(overwritten_transactions.reduce((curr, t) => curr && (t.name == new_transaction_name), true)).toBeTruthy();
+        expect(overwritten_transactions.length).toBe(transactions.length);
 
         await t.cleanup();
     }, 40_000);

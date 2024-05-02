@@ -9,7 +9,7 @@ import {setTestDBContext} from "./firebase.ts";
 
 describe("Firestore UserPrefs Tests", () => {
     test("Category Integrity Test", () => {
-        expect(_.isEqual(new Set(Object.keys(Categories)), TransactionCategories),  "Emoji keys do not match transaction categories").toBeTruthy();
+        expect(_.isEqual(new Set(Object.keys(Categories)), TransactionCategories),  "Category keys do not match transaction categories").toBeTruthy();
     });
     test("Read/Write/Default Value Test", async () => {
         const t = await getTestEnv();
