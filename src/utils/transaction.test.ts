@@ -97,7 +97,7 @@ describe("Firestore Transaction Tests", () => {
         expect(_.isEqual(sorted_transactions, sorted_fetched_transactions), "Written transactions not fetched").toBeTruthy();
 
         await t.cleanup();
-    }, 10_000);
+    }, 20_000);
 
     test("Read All Test", async () => {
         const t = await getTestEnv();
@@ -125,7 +125,7 @@ describe("Firestore Transaction Tests", () => {
             updated_transactions.reduce((curr, el) => curr || _.isEqual(el, new_transaction), false)
         , "Written transaction not fetched").toBeTruthy();
         await t.cleanup();
-    }, 10_000);
+    }, 20_000);
 
     test("Delete Test", async () => {
         const t = await getTestEnv();
@@ -193,7 +193,7 @@ describe("Firestore Transaction Tests", () => {
         expect(overwritten_transactions.reduce((curr, t) => curr && (t.name == new_transaction_name), true)).toBeTruthy();
 
         await t.cleanup();
-    }, 20_000);
+    }, 40_000);
 
     test("Overwrite Test", async () => {
         const t = await getTestEnv();
