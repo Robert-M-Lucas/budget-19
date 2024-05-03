@@ -20,7 +20,7 @@ const test = defaultTest.extend({ user: userEvent.setup() })
 // mock the "writeNewTransactionsBatched" function to cirumvent firebase auth and rules
 // its already been unit tested so we know it works
 vi.mock("../../utils/transaction", async (importOriginal) => {
-    const mod: {} = await importOriginal();
+    const mod: NonNullable<unknown> = await importOriginal();
     return {
         ...mod,
         writeNewTransactionsBatched: vi.fn(),
@@ -29,7 +29,7 @@ vi.mock("../../utils/transaction", async (importOriginal) => {
 
 // mock auth.currentUser to simulate a user being signed into website
 vi.mock("../../utils/firebase", async (importOriginal) => {
-    const mod: {} = await importOriginal();
+    const mod: NonNullable<unknown> = await importOriginal();
     return {
         ...mod,
         auth: { currentUser: { uid: "100" } }
