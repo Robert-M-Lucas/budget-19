@@ -124,7 +124,7 @@ export class Transaction {
     setCurrency(currency?: string) {
         if (!this.isNotEmpty(currency)) {
             this.isValid = false;
-            this.invalidField = "name";
+            this.invalidField = "currency";
         } else {
             this.currency = currency;
         }
