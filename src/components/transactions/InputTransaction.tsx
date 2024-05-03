@@ -32,7 +32,7 @@ export function InputTransaction({ show, closeModal }: { show: boolean, closeMod
         if (date.trim() !== "" && curTime.trim() === "") curTime = "00:00:00"
         else if (curTime.trim() === "") curTime = formatTime(new Date())
 
-            const transaction = new Transaction()
+        const transaction = new Transaction()
             .setDate(date.trim() === "" ? formatDate(new Date()) : date)
             .setTime(curTime)
             .setName(name)

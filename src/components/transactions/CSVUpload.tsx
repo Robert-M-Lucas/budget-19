@@ -26,12 +26,12 @@ export function CSVUpload({ show, closeModal }: { show: boolean, closeModal: (ad
 
         const file = fileElement.files![0]; 
         if (!file) return setError("You haven't uploaded a CSV file");
-    
+
         reader.onload = async (event) => {
             if (!auth.currentUser) return setError("You are not signed in");
             
             const csvContent = event.target?.result;
-            if (!csvContent || csvContent instanceof ArrayBuffer) return setError("Unable to read uploaded CSV file");
+            if (!csvContent || csvContent instanceof ArrayBuffer) return setError("Uploaded CSV is empty");
 
             const transactionDocuments = csvContent
                 .split("\n")
@@ -62,7 +62,7 @@ export function CSVUpload({ show, closeModal }: { show: boolean, closeModal: (ad
         </Modal.Header>
         <Modal.Body>
             <Form>
-                <Form.Control type="file" id="file" accept=".csv" />
+                <Form.Control data-testid="csvUpload" type="file" id="file" accept=".csv" />
             </Form>
 
             {successMsg && <Alert variant="success">{successMsg}</Alert>}
